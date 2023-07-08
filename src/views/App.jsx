@@ -1,16 +1,10 @@
-
-import './App.css'
-import { Navbar } from './components/Navbar'
+import "./App.css";
+import NavbarSidebarLayout from "./layout/navbar-sidebar";
 
 function App() {
-
   return (
-    
-    <div>
-      Hi
-      <Navbar/>
-    </div>
-  )
+      <NavbarSidebarLayout />
+  );
 }
 
-export default App
+export default App;
