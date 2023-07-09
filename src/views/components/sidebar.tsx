@@ -1,14 +1,9 @@
-import { Sidebar, TextInput } from "flowbite-react";
+import { Sidebar } from "flowbite-react";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import {
-  HiChartPie,
-  HiClipboard,
   HiCollection,
-  HiInformationCircle,
-  HiLogin,
-  HiPencil,
-  HiSearch,
+  HiLogout,
   HiShoppingBag,
   HiUsers,
 } from "react-icons/hi";
@@ -26,57 +21,38 @@ const ExampleSidebar: FC = function () {
   return (
     <Sidebar aria-label="Sidebar with multi-level dropdown example">
       <div className="flex h-full flex-col justify-between py-2">
-        <div>
-          <form className="pb-3 md:hidden">
-            <TextInput
-              icon={HiSearch}
-              type="search"
-              placeholder="Search"
-              required
-              size={32}
-            />
-          </form>
-          <Sidebar.Items>
-            <Sidebar.ItemGroup>
-              <Sidebar.Item
-                href="/"
-                icon={HiCollection}
-                className={
-                  "/" === currentPage ? "bg-gray-100 dark:bg-gray-700" : ""
-                }
-              >
-                  Acceuil
-              </Sidebar.Item>
-              <Sidebar.Item
-                href="/e-commerce/products"
-                icon={HiShoppingBag}
-                className={
-                  "/e-commerce/products" === currentPage
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
-                }
-              >
-                Liste de pointage
-              </Sidebar.Item>
-              <Sidebar.Item
-                href="/users/list"
-                icon={HiUsers}
-                className={
-                  "/users/list" === currentPage
-                    ? "bg-gray-100 dark:bg-gray-700"
-                    : ""
-                }
-              >
-                Liste des responsables
-              </Sidebar.Item>
-              <Sidebar.Item href="/auth/login" icon={HiLogin}>
-                Déconnexion
-              </Sidebar.Item>
-        
-            </Sidebar.ItemGroup>
-  
-          </Sidebar.Items>
-        </div>
+
+        <Sidebar.Items>
+          <Sidebar.ItemGroup>
+            <Sidebar.Item
+              href="/dashboard"
+              icon={HiCollection}
+            >
+              Acceuil
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="/employers"
+              icon={HiShoppingBag}
+
+            >
+              Liste de pointage
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="/responsables"
+              icon={HiUsers}
+            >
+              Liste des responsables
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="/"
+              icon={HiLogout}>
+              Déconnexion
+            </Sidebar.Item>
+
+          </Sidebar.ItemGroup>
+
+        </Sidebar.Items>
+
       </div>
     </Sidebar>
   );

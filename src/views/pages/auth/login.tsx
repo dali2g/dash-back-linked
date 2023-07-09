@@ -1,15 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, Card, Checkbox, Label, TextInput } from "flowbite-react";
-import type { FC } from "react";
 import React, { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
+import type { FC } from "react";
 
-
-import logo from "../../../public/images/TA_logo.jpg"
-import image from "../../../public/images/autoroute.jpg"
 
 interface FormProps { }
-const SignInPage: React.FC<FormProps> = () => {
+const SignInPage: FC<FormProps> = () => {
 
   const [userNameState, setUserNameState] = useState('')
   const [passwordState, setPasswordState] = useState('')
@@ -21,7 +18,7 @@ const SignInPage: React.FC<FormProps> = () => {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (userNameState === 'admin' && passwordState === 'admin') {
-      navigate('/');
+      navigate('/dashboard');
 
     }
     else {
@@ -37,15 +34,15 @@ const SignInPage: React.FC<FormProps> = () => {
           </svg>
           <span className="sr-only">Info</span>
           <div>
-            <span className="font-medium">Informations Invalides</span> Veuiller saisir des coordonnées correctes
+            <span className="font-medium">Informations Invalides:</span> Veuiller saisir des coordonnées correctes
           </div>
         </div>
       )}
-      <div className="flex flex-col items-center justify-center px-6 py-5 lg:h-screen lg:gap-y-12">
-        <div className="my-6 flex items-center gap-x-1 lg:my-0">
+    <div className="flex flex-col items-center justify-center px-6 lg:h-screen lg:gap-y-12">
+      <div className="my-6 flex items-center gap-x-1 lg:my-0">
           <img
             alt="TA Logo"
-            src={logo}
+            src="/images/TA_logo.png"
             className="mr-3 h-8"
 
           />
@@ -55,9 +52,9 @@ const SignInPage: React.FC<FormProps> = () => {
         </div>
         <Card
           horizontal
-          imgSrc={image}
+          imgSrc="/images/autoroute.jpg"
           imgAlt=""
-          className="w-full lg:w-full lg:max-w-screen-lg"
+          className="w-full md:max-w-screen-sm [&>img]:hidden md:[&>img]:w-96 md:[&>img]:p-0 md:[&>*]:w-full md:[&>*]:p-16 lg:[&>img]:block"
         >
           <h1 className="mb-3 text-2xl font-bold dark:text-white md:text-3xl">
             Se Connecter

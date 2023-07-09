@@ -6,7 +6,6 @@ import { MdFacebook } from "react-icons/md";
 import { FaDribbble, FaGithub, FaInstagram, FaTwitter } from "react-icons/fa";
 import React from "react";
 
-
 interface NavbarSidebarLayoutProps {
   isFooter?: boolean;
 }
@@ -16,7 +15,7 @@ const NavbarSidebarLayout: FC<PropsWithChildren<NavbarSidebarLayoutProps>> =
     return (
       <>
         <Navbar />
-        <div className="flex items-start pt-16">
+        <div className="flex">
           <Sidebar />
           <MainContent isFooter={isFooter}>{children}</MainContent>
         </div>
@@ -29,7 +28,7 @@ const MainContent: FC<PropsWithChildren<NavbarSidebarLayoutProps>> = function ({
   isFooter,
 }) {
   return (
-    <main className="relative h-full w-full overflow-y-auto bg-gray-50 dark:bg-gray-900 lg:ml-64">
+    <main className="relative h-full w-full overflow-y-auto bg-gray-50 dark:bg-gray-900 ">
       {children}
       {isFooter && (
         <div className="mx-4 mt-4">
@@ -97,7 +96,7 @@ const MainContentFooter: FC = function () {
         </div>
       </Footer>
       <p className="my-8 text-center text-sm text-gray-500 dark:text-gray-300">
-        &copy; 2019-2022 Flowbite.com. All rights reserved.
+        &copy; 2023 Autoroute-Tunisie. Tous droits réservés.
       </p>
     </>
   );
