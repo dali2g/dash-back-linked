@@ -106,9 +106,6 @@ const UserListPage: FC = function () {
 const AddUserModal: FC = function () {
   const [isOpen, setOpen] = useState(false);
 
-  const handleFormSubmit = () => {
-    setOpen(false);
-  };
   return (
     <>
       <Button color="primary" onClick={() => setOpen(true)}>
@@ -124,6 +121,9 @@ const AddUserModal: FC = function () {
         <Modal.Body>
           <AddUserForm />
         </Modal.Body>
+        <Modal.Footer>
+          
+        </Modal.Footer>
 
 
       </Modal>
