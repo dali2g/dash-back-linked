@@ -101,8 +101,45 @@ const UserListPage: FC = function () {
   );
 };
 
+interface User {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  gender: string;
+  matricule: string;
+  currentPassword: string;
+  newPassword: string;
+}
 const AddUserModal: FC = function () {
   const [isOpen, setOpen] = useState(false);
+  const initialUserState: User = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    gender: "",
+    matricule: "",
+    currentPassword: "",
+    newPassword: "",
+  };
+  const [user, setUser] = useState<User>(initialUserState);
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+    console.log(user)
+  };
+
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(user);
+    setUser(initialUserState);
+    setOpen(false);
+  };
 
   return (
     <>
@@ -124,14 +161,22 @@ const AddUserModal: FC = function () {
                 <TextInput
                   id="firstName"
                   name="firstName"
-                  placeholder="Mohamed Ali"
+                  placeholder="Vote Prénom"
+                  value={user.firstName}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
             <div>
               <Label htmlFor="lastName">Nom de famille</Label>
               <div className="mt-1">
-                <TextInput id="lastName" name="lastName" placeholder="Mejdi" />
+                <TextInput
+                  id="lastName"
+                  name="lastName"
+                  placeholder="Nom"
+                  value={user.lastName}
+                  onChange={handleInputChange}
+                />
               </div>
             </div>
             <div>
@@ -140,8 +185,10 @@ const AddUserModal: FC = function () {
                 <TextInput
                   id="email"
                   name="email"
-                  placeholder="medali.mejdi@autoroutes.tn"
+                  placeholder="Votre E-mail"
                   type="email"
+                  value={user.email}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
@@ -151,128 +198,158 @@ const AddUserModal: FC = function () {
                 <TextInput
                   id="phone"
                   name="phone"
-                  placeholder="+(216) 22 222 222"
+                  placeholder="Votre Numéro de Télephone"
                   type="tel"
+                  value={user.phone}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
-            <div>
-              <Label htmlFor="gender">Genre</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="gender"
-                  name="gender"
-                  placeholder="Homme"
-                  type="text"
-                />
-              </div>
+<div>
+            <Label htmlFor="gender">Genre</Label>
+            <div className="mt-1">
+              <TextInput
+                id="gender"
+                name="gender"
+                placeholder="Sexe"
+                type="text"
+                value={user.gender}
+                onChange={handleInputChange}
+              />
             </div>
-            <div>
-              <Label htmlFor="matricule">Matricule</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="matricule"
-                  name="matricule"
-                  placeholder="XXX XXX XXX"
-                  type="text"
-                />
-              </div>
-            </div>
-
-
           </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button color="primary" onClick={() => setOpen(false)}>
-            Ajouter
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
+          <div>
+            <Label htmlFor="matricule">Matricule</Label>
+            <div className="mt-1">
+              <TextInput
+                id="matricule"
+                name="matricule"
+                placeholder="XXX XXX XXX"
+                type="text"
+                value={user.matricule}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="currentPassword">Mot de passe actuel</Label>
+            <div className="mt-1">
+              <TextInput
+                id="currentPassword"
+                name="currentPassword"
+                type="password"
+                value={user.currentPassword}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+            <div className="mt-1">
+              <TextInput
+                id="newPassword"
+                name="newPassword"
+                type="password"
+                value={user.newPassword}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button color="primary" onClick={() => setOpen(false)}>
+          Ajouter
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  </>
+);
 };
 
 const AllUsersTable: FC = function () {
-  const users = [
-    {
-      image: "/images/users/roberta-casas.png",
-      firstname: "Iheb",
-      lastname: "Jlassi",
-      gender: 'Femme',
-      email: "iheb.jlassi@autoroutes.tn",
-      phone: "24 258 269",
-      matricule: "132 782 144"
-    },
-    {
-      image: "/images/users/jese-leos.png",
-      firstname: "Mohamed Ali",
-      lastname: "Mejdi",
-      gender: 'Homme',
-      email: "medali.mejdi@autoroutes.tn",
-      phone: "94 951 269",
-      matricule: "154 216 815"
-    },
-    {
-      image: "/images/users/neil-sims.png",
-      firstname: "Rami",
-      lastname: "Ali",
-      gender: 'Femme',
-      email: "iheb.jlassi@autoroutes.tn",
-      phone: "24 258 269",
-      matricule: "131 282 154"
-    },
-    // Add more user objects as needed
-  ];
-  return (
-    <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-      <Table.Head className="bg-gray-100 dark:bg-gray-700">
+const users = [
+{
+image: "/images/users/roberta-casas.png",
+firstName: "Iheb",
+lastName: "Jlassi",
+gender: 'Femme',
+email: "iheb.jlassi@autoroutes.tn",
+phone: "24 258 269",
+matricule: "132 782 144"
+},
+{
+image: "/images/users/jese-leos.png",
+firstName: "Mohamed Ali",
+lastName: "Mejdi",
+gender: 'Homme',
+email: "medali.mejdi@autoroutes.tn",
+phone: "94 951 269",
+matricule: "154 216 815"
+},
+{
+image: "/images/users/neil-sims.png",
+firstName: "Rami",
+lastName: "Ali",
+gender: 'Femme',
+email: "iheb.jlassi@autoroutes.tn",
+phone: "24 258 269",
+matricule: "131 282 154"
+},
+// Add more user objects as needed
+];
+return (
+<Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+  <Table.Head className="bg-gray-100 dark:bg-gray-700">
 
-        <Table.HeadCell>Nom et Prénom</Table.HeadCell>
-        <Table.HeadCell>Mobile</Table.HeadCell>
-        <Table.HeadCell>Genre</Table.HeadCell>
-        <Table.HeadCell>Matricule</Table.HeadCell>
-        <Table.HeadCell>Actions</Table.HeadCell>
-      </Table.Head>
-      <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+    <Table.HeadCell>Nom et Prénom</Table.HeadCell>
+    <Table.HeadCell>Mobile</Table.HeadCell>
+    <Table.HeadCell>Genre</Table.HeadCell>
+    <Table.HeadCell>Matricule</Table.HeadCell>
+    <Table.HeadCell>Actions</Table.HeadCell>
+  </Table.Head>
+  <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
 
-        {users.map((user, index) => (<Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
-          <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
-            <img
-              className="h-10 w-10 rounded-full"
-              src={user.image}
-              alt="Lana Byrd avatar"
-            />
+    {users.map((user, index) => (
+      <Table.Row
+        key={`${user.firstName}-${user.lastName}`}
+        className="hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
+          <img
+            className="h-10 w-10 rounded-full"
+            src={user.image}
+            alt="Lana Byrd avatar"
+          />
+          <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+            <div className="text-base font-semibold text-gray-900 dark:text-white">
+              {user.firstName} {user.lastName}
+            </div>
             <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              <div className="text-base font-semibold text-gray-900 dark:text-white">
-                {user.firstname} {user.lastname}
-              </div>
-              <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                {user.email}
-              </div>
+              {user.email}
             </div>
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {user.phone}
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {user.gender}
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
-            <div className="flex items-center">
-              {user.matricule}
-            </div>
-          </Table.Cell>
-          <Table.Cell>
-            <div className="flex items-center gap-x-3 whitespace-nowrap">
-              <EditUserModal />
-              <DeleteUserModal />
-            </div>
-          </Table.Cell>
-        </Table.Row>
-        ))}
-      </Table.Body>
-    </Table>
-  );
+          </div>
+        </Table.Cell>
+        <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+          {user.phone}
+        </Table.Cell>
+        <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+          {user.gender}
+        </Table.Cell>
+        <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
+          <div className="flex items-center">{user.matricule}</div>
+        </Table.Cell>
+        <Table.Cell>
+          <div className="flex items-center gap-x-3 whitespace-nowrap">
+            <EditUserModal />
+            <DeleteUserModal />
+          </div>
+        </Table.Cell>
+      </Table.Row>
+    ))}
+  </Table.Body>
+</Table>
+);
 };
 
 const EditUserModal: FC = function () {
@@ -290,94 +367,92 @@ const EditUserModal: FC = function () {
         <Modal.Header className="border-b border-gray-200 !p-6 dark:border-gray-700">
           <strong>Modifier les informations</strong>
         </Modal.Header>
-        <Modal.Body>
+    {/*     <Modal.Body>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <Label htmlFor="firstName">Prénom</Label>
+              <label htmlFor="firstName">Prénom</label>
               <div className="mt-1">
                 <TextInput
-                  id="firstName"
-                  name="firstName"
-                  placeholder="Mohamed Ali"
+                  id="firstNameMod"
+                  name="firstNameMod"
+                  placeholder="prenom"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="lastName">Nom de famille</Label>
+              <label htmlFor="lastName">Nom de famille</label>
               <div className="mt-1">
-                <TextInput id="lastName" name="lastName" placeholder="Mejdi" />
+                <TextInput id="lastNameMod" name="lastNameMod" placeholder="Nom" />
               </div>
             </div>
             <div>
-              <Label htmlFor="email">E-mail</Label>
+              <label htmlFor="email">E-mail</label>
               <div className="mt-1">
                 <TextInput
-                  id="email"
-                  name="email"
-                  placeholder="medali.mejdi@autoroutes.tn"
+                  id="emailMod"
+                  name="emailMod"
+                  placeholder="email"
                   type="email"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="phone">Numéro de mobile</Label>
+              <label htmlFor="phone">Numéro de mobile</label>
               <div className="mt-1">
                 <TextInput
-                  id="phone"
-                  name="phone"
-                  placeholder="+(216) 22 222 222"
+                  id="phoneMod"
+                  name="phoneMod"
+                  placeholder="+(216)"
                   type="tel"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="gender">Genre</Label>
+              <label htmlFor="gender">Genre</label>
               <div className="mt-1">
                 <TextInput
-                  id="gender"
-                  name="gender"
-                  placeholder="Homme"
+                  id="genderMod"
+                  name="genderMod"
+                  placeholder="Sexe"
                   type="text"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="matricule">Matricule</Label>
+              <label htmlFor="matricule">Matricule</label>
               <div className="mt-1">
                 <TextInput
-                  id="matricule"
-                  name="matricule"
+                  id="matriculeMod"
+                  name="matriculeMod"
                   placeholder="XXX XXX XXX"
                   type="text"
                 />
               </div>
             </div>
             <div>
-
-              <Label htmlFor="passwordCurrent">Mot de passe actuel</Label>
+              <label htmlFor="passwordCurrent">Mot de passe actuel</label>
               <div className="mt-1">
                 <TextInput
-                  id="passwordCurrent"
-                  name="passwordCurrent"
+                  id="passwordCurrentMod"
+                  name="passwordCurrentMod"
                   placeholder="••••••••"
                   type="password"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="passwordNew">Nouveau mot de passe</Label>
+              <label htmlFor="passwordNew">Nouveau mot de passe</label>
               <div className="mt-1">
                 <TextInput
-                  id="passwordNew"
-                  name="passwordNew"
+                  id="passwordNewMod"
+                  name="passwordNewMod"
                   placeholder="••••••••"
                   type="password"
                 />
               </div>
             </div>
-
           </div>
-        </Modal.Body>
+        </Modal.Body> */}
         <Modal.Footer>
           <Button color="primary" onClick={() => setOpen(false)}>
             Sauvegarder
@@ -472,5 +547,7 @@ export const Pagination: FC = function () {
     </div>
   );
 };
+
+
 
 export default UserListPage;
