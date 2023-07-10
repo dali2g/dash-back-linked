@@ -9,7 +9,7 @@ import {
 } from "flowbite-react";
 
 import type { FC } from "react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HiChevronLeft,
   HiChevronRight,
@@ -101,9 +101,14 @@ const UserListPage: FC = function () {
   );
 };
 
+
+
 const AddUserModal: FC = function () {
   const [isOpen, setOpen] = useState(false);
 
+  const handleFormSubmit = () => {
+    setOpen(false);
+  };
   return (
     <>
       <Button color="primary" onClick={() => setOpen(true)}>
@@ -117,84 +122,130 @@ const AddUserModal: FC = function () {
           <strong>Ajouter un nouveau responsable</strong>
         </Modal.Header>
         <Modal.Body>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="firstName">Prénom</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="firstName"
-                  name="firstName"
-                  placeholder="Mohamed Ali"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="lastName">Nom de famille</Label>
-              <div className="mt-1">
-                <TextInput id="lastName" name="lastName" placeholder="Mejdi" />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="email">E-mail</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="email"
-                  name="email"
-                  placeholder="medali.mejdi@autoroutes.tn"
-                  type="email"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="phone">Numéro de mobile</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="phone"
-                  name="phone"
-                  placeholder="+(216) 22 222 222"
-                  type="tel"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="gender">Genre</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="gender"
-                  name="gender"
-                  placeholder="Homme"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="matricule">Matricule</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="matricule"
-                  name="matricule"
-                  placeholder="XXX XXX XXX"
-                  type="text"
-                />
-              </div>
-            </div>
-
-
-          </div>
+          <AddUserForm />
         </Modal.Body>
-        <Modal.Footer>
-          <Button color="primary" onClick={() => setOpen(false)}>
-            Ajouter
-          </Button>
-        </Modal.Footer>
+
+
       </Modal>
     </>
   );
 };
 
+
+
+const AddUserForm: FC = function () {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    gender: '',
+    matricule: ''
+  });
+
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+
+
+  const handleSubmit = () => {
+    console.log(formData);
+  };
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <Label htmlFor="firstName">Prénom</Label>
+        <div className="mt-1">
+          <TextInput
+            id="firstName"
+            name="firstName"
+            placeholder="Mohamed Ali"
+            value={formData.firstName}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="lastName">Nom de famille</Label>
+        <div className="mt-1">
+          <TextInput
+            id="lastName"
+            name="lastName"
+            placeholder="Mejdi"
+            value={formData.lastName}
+            onChange={handleInputChange} />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="email">E-mail</Label>
+        <div className="mt-1">
+          <TextInput
+            id="email"
+            name="email"
+            placeholder="medali.mejdi@autoroutes.tn"
+            type="email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="phone">Numéro de mobile</Label>
+        <div className="mt-1">
+          <TextInput
+            id="phone"
+            name="phone"
+            placeholder="+(216) 22 222 222"
+            type="tel"
+            value={formData.phone}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="gender">Genre</Label>
+        <div className="mt-1">
+          <TextInput
+            id="gender"
+            name="gender"
+            placeholder="Homme"
+            value={formData.gender}
+            onChange={handleInputChange}
+
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="matricule">Matricule</Label>
+        <div className="mt-1">
+          <TextInput
+            id="matricule"
+            name="matricule"
+            placeholder="XXX XXX XXX"
+            value={formData.matricule}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+      <Button color="primary"
+        onClick={handleSubmit}>
+        Sauvegarder
+      </Button>
+    </div>
+  )
+}
+
 const AllUsersTable: FC = function () {
   const users = [
     {
+      id: 0,
       image: "/images/users/roberta-casas.png",
       firstname: "Iheb",
       lastname: "Jlassi",
@@ -204,6 +255,7 @@ const AllUsersTable: FC = function () {
       matricule: "132 782 144"
     },
     {
+      id: 1,
       image: "/images/users/jese-leos.png",
       firstname: "Mohamed Ali",
       lastname: "Mejdi",
@@ -213,6 +265,7 @@ const AllUsersTable: FC = function () {
       matricule: "154 216 815"
     },
     {
+      id: 2,
       image: "/images/users/neil-sims.png",
       firstname: "Rami",
       lastname: "Ali",
@@ -235,7 +288,7 @@ const AllUsersTable: FC = function () {
       </Table.Head>
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
 
-        {users.map((user, index) => (<Table.Row className="hover:bg-gray-100 dark:hover:bg-gray-700">
+        {users.map((user, index) => (<Table.Row key={index} className="hover:bg-gray-100 dark:hover:bg-gray-700">
           <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
             <img
               className="h-10 w-10 rounded-full"
