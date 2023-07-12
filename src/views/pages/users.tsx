@@ -25,6 +25,7 @@ import {
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
 
+import axios from 'axios'
 
 const UserListPage: FC = function () {
   return (
@@ -119,7 +120,9 @@ const AddUserModal: FC = function () {
           <strong>Ajouter un nouveau responsable</strong>
         </Modal.Header>
         <Modal.Body>
+
           <AddUserForm />
+        
         </Modal.Body>
         <Modal.Footer>
           
@@ -153,9 +156,15 @@ const AddUserForm: FC = function () {
   };
 
 
-
-  const handleSubmit = () => {
-    console.log(formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      await axios.post("/responsables", formData);
+      console.log("data submitted!");
+    } catch (error) {
+      console.error("error submitting !:", error);
+    }
   };
 
   return (
@@ -166,7 +175,7 @@ const AddUserForm: FC = function () {
           <TextInput
             id="firstName"
             name="firstName"
-            placeholder="Mohamed Ali"
+            placeholder="Votre Prénom"
             value={formData.firstName}
             onChange={handleInputChange}
           />
@@ -178,7 +187,7 @@ const AddUserForm: FC = function () {
           <TextInput
             id="lastName"
             name="lastName"
-            placeholder="Mejdi"
+            placeholder="Votre Nom"
             value={formData.lastName}
             onChange={handleInputChange} />
         </div>
@@ -189,7 +198,7 @@ const AddUserForm: FC = function () {
           <TextInput
             id="email"
             name="email"
-            placeholder="medali.mejdi@autoroutes.tn"
+            placeholder="Votre Email"
             type="email"
             value={formData.email}
             onChange={handleInputChange}
@@ -202,7 +211,7 @@ const AddUserForm: FC = function () {
           <TextInput
             id="phone"
             name="phone"
-            placeholder="+(216) 22 222 222"
+            placeholder="+(216)"
             type="tel"
             value={formData.phone}
             onChange={handleInputChange}
@@ -215,7 +224,7 @@ const AddUserForm: FC = function () {
           <TextInput
             id="gender"
             name="gender"
-            placeholder="Homme"
+            placeholder="Genre"
             value={formData.gender}
             onChange={handleInputChange}
 

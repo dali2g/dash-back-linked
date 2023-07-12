@@ -1,8 +1,9 @@
 {
   "name": "autoroute-dash",
   "private": true,
-  "version": "0.0.0",
-  "type": "commonjs",
+  "version": "1.2.3",
+  "type": "module",
+  
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,6 +12,7 @@
   },
   "dependencies": {
     "apexcharts": "^3.41.0",
+    "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "classnames": "^2.3.2",
     "cors": "^2.8.5",
