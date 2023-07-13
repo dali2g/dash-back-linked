@@ -25,7 +25,7 @@ import {
 } from "react-icons/hi";
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
 
-import axios from 'axios'
+
 
 const UserListPage: FC = function () {
   return (
@@ -158,13 +158,7 @@ const AddUserForm: FC = function () {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-      await axios.post("/responsables", formData);
-      console.log("data submitted!");
-    } catch (error) {
-      console.error("error submitting !:", error);
-    }
+
   };
 
   return (
