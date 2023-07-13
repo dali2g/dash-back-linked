@@ -22,6 +22,7 @@ app.get('/*', (req, res) => {
 // Use the userRouter for user-related routes
 app.use('/users', userRouter);
 
+
 // Start the server
 const port = 5173;
 app.listen(port, () => {

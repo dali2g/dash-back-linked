@@ -160,7 +160,7 @@ const AddUserForm: FC = function () {
     e.preventDefault();
   
     try {
-      await axios.post("/responsables", formData);
+      await axios.post("/users/responsables", formData);
       console.log("data submitted!");
     } catch (error) {
       console.error("error submitting !:", error);
