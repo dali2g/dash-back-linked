@@ -8,8 +8,8 @@ import {
   TextInput,
 } from "flowbite-react";
 
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import React, { FC ,useEffect, useState } from "react";
+import axios from 'axios'
 import {
   HiChevronLeft,
   HiChevronRight,
@@ -26,8 +26,27 @@ import {
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
 
 
-
 const UserListPage: FC = function () {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Fetch users from MongoDB database
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5173/users/responsables");
+        setUsers(response.data);
+        console.log(users[0])
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+ 
+
+
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
@@ -79,12 +98,6 @@ const UserListPage: FC = function () {
             </div>
             <div className="ml-auto flex items-center space-x-2 sm:space-x-3">
               <AddUserModal />
-              <Button color="gray">
-                <div className="flex items-center gap-x-3">
-                  <HiDocumentDownload className="text-xl" />
-                  <span>Export</span>
-                </div>
-              </Button>
             </div>
           </div>
         </div>
@@ -93,7 +106,7 @@ const UserListPage: FC = function () {
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow">
-              <AllUsersTable />
+              <AllUsersTable users={users} />
             </div>
           </div>
         </div>
@@ -101,8 +114,6 @@ const UserListPage: FC = function () {
     </NavbarSidebarLayout>
   );
 };
-
-
 
 const AddUserModal: FC = function () {
   const [isOpen, setOpen] = useState(false);
@@ -120,21 +131,15 @@ const AddUserModal: FC = function () {
           <strong>Ajouter un nouveau responsable</strong>
         </Modal.Header>
         <Modal.Body>
-
           <AddUserForm />
-        
         </Modal.Body>
         <Modal.Footer>
           
         </Modal.Footer>
-
-
       </Modal>
     </>
   );
 };
-
-
 
 const AddUserForm: FC = function () {
   const [formData, setFormData] = useState({
@@ -143,9 +148,10 @@ const AddUserForm: FC = function () {
     email: '',
     phone: '',
     gender: '',
-    matricule: ''
+    matricule: '',
+    password:'',
+    confirmPassword:'',
   });
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -155,12 +161,17 @@ const AddUserForm: FC = function () {
     }));
   };
 
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
+    try {
+      await axios.post("/users/responsables", formData);
+      console.log("Data submitted!");
+    } catch (error) {
+      console.error("error submitting:", error);
+    }
   };
-
+  
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
       <div>
@@ -183,7 +194,8 @@ const AddUserForm: FC = function () {
             name="lastName"
             placeholder="Votre Nom"
             value={formData.lastName}
-            onChange={handleInputChange} />
+            onChange={handleInputChange}
+          />
         </div>
       </div>
       <div>
@@ -221,7 +233,6 @@ const AddUserForm: FC = function () {
             placeholder="Genre"
             value={formData.gender}
             onChange={handleInputChange}
-
           />
         </div>
       </div>
@@ -237,52 +248,51 @@ const AddUserForm: FC = function () {
           />
         </div>
       </div>
-      <Button color="primary"
-        onClick={handleSubmit}>
+      <div>
+        <Label htmlFor="password">Mot de Passe</Label>
+        <div className="mt-1">
+          <TextInput
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            type="password"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="confirmPassword">Mot de Passe</Label>
+        <div className="mt-1">
+          <TextInput
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="••••••••"
+            type="password"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+          />
+        </div>
+      </div>
+      <Button color="primary" onClick={handleSubmit}>
         Sauvegarder
       </Button>
     </div>
-  )
+  );
 }
 
-const AllUsersTable: FC = function () {
-  const users = [
-    {
-      id: 0,
-      image: "/images/users/roberta-casas.png",
-      firstname: "Iheb",
-      lastname: "Jlassi",
-      gender: 'Femme',
-      email: "iheb.jlassi@autoroutes.tn",
-      phone: "24 258 269",
-      matricule: "132 782 144"
-    },
-    {
-      id: 1,
-      image: "/images/users/jese-leos.png",
-      firstname: "Mohamed Ali",
-      lastname: "Mejdi",
-      gender: 'Homme',
-      email: "medali.mejdi@autoroutes.tn",
-      phone: "94 951 269",
-      matricule: "154 216 815"
-    },
-    {
-      id: 2,
-      image: "/images/users/neil-sims.png",
-      firstname: "Rami",
-      lastname: "Ali",
-      gender: 'Femme',
-      email: "iheb.jlassi@autoroutes.tn",
-      phone: "24 258 269",
-      matricule: "131 282 154"
-    },
-    // Add more user objects as needed
-  ];
+const AllUsersTable: FC<{ users: any[] }> = function ({ users }) {
+  if (users === undefined || users.length === 0 ) {
+    return <p>Loading...</p>; 
+  }
+
+  if (!Array.isArray(users) || users.length === 0) {
+    return <p>No users found.</p>; 
+  }
+  
   return (
     <Table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
       <Table.Head className="bg-gray-100 dark:bg-gray-700">
-
         <Table.HeadCell>Nom et Prénom</Table.HeadCell>
         <Table.HeadCell>Mobile</Table.HeadCell>
         <Table.HeadCell>Genre</Table.HeadCell>
@@ -290,48 +300,162 @@ const AllUsersTable: FC = function () {
         <Table.HeadCell>Actions</Table.HeadCell>
       </Table.Head>
       <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-
-        {users.map((user, index) => (<Table.Row key={index} className="hover:bg-gray-100 dark:hover:bg-gray-700">
-          <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
-            <img
-              className="h-10 w-10 rounded-full"
-              src={user.image}
-              alt="Lana Byrd avatar"
-            />
-            <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-              <div className="text-base font-semibold text-gray-900 dark:text-white">
-                {user.firstname} {user.lastname}
-              </div>
-              <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                {user.email}
-              </div>
-            </div>
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {user.phone}
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-            {user.gender}
-          </Table.Cell>
-          <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
-            <div className="flex items-center">
-              {user.matricule}
-            </div>
-          </Table.Cell>
-          <Table.Cell>
-            <div className="flex items-center gap-x-3 whitespace-nowrap">
-              <EditUserModal />
-              <DeleteUserModal />
-            </div>
-          </Table.Cell>
-        </Table.Row>
-        ))}
+        {users.map((user) => {
+          return (
+            <Table.Row key={user._id} className="hover:bg-gray-100 dark:hover:bg-gray-700">
+              <Table.Cell className="mr-12 flex items-center space-x-6 whitespace-nowrap p-4 lg:mr-0">
+                <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                    {user.firstName} {user.lastName}
+                  </div>
+                  <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                    {user.email}
+                  </div>
+                </div>
+              </Table.Cell>
+              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                {user.phone}
+              </Table.Cell>
+              <Table.Cell className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
+                {user.gender}
+              </Table.Cell>
+              <Table.Cell className="whitespace-nowrap p-4 text-base font-normal text-gray-900 dark:text-white">
+                <div className="flex items-center">
+                  {user.matricule}
+                </div>
+              </Table.Cell>
+              <Table.Cell>
+                <div className="flex items-center gap-x-3 whitespace-nowrap">
+                  <EditUserModal userId={user._id} />
+                  <DeleteUserModal userId={user._id} />
+                </div>
+              </Table.Cell>
+            </Table.Row>
+          );
+        })}
       </Table.Body>
     </Table>
   );
 };
 
-const EditUserModal: FC = function () {
+const EditUserForm: FC<{ userId: string }> = function ({ userId }) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [matricule, setMatricule] = useState("");
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`/users/responsables/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          gender,
+          matricule,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      console.log("Response status:", response.status);
+      console.log("Response data:", await response.json());
+
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div>
+        <Label htmlFor="firstName">Prénom</Label>
+        <div className="mt-1">
+          <TextInput
+            id="firstName"
+            name="firstName"
+            placeholder="Votre Prénom"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="lastName">Nom de famille</Label>
+        <div className="mt-1">
+          <TextInput
+            id="lastName"
+            name="lastName"
+            placeholder="Votre Nom"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="email">E-mail</Label>
+        <div className="mt-1">
+          <TextInput
+            id="email"
+            name="email"
+            placeholder="Votre email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="phone">Numéro de mobile</Label>
+        <div className="mt-1">
+          <TextInput
+            id="phone"
+            name="phone"
+            placeholder="+(216)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            type="tel"
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="gender">Genre</Label>
+        <div className="mt-1">
+          <TextInput
+            id="gender"
+            name="gender"
+            placeholder="Sexe"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            type="text"
+          />
+        </div>
+      </div>
+      <div>
+        <Label htmlFor="matricule">Matricule</Label>
+        <div className="mt-1">
+          <TextInput
+            id="matricule"
+            name="matricule"
+            placeholder="XXX XXX XXX"
+            value={matricule}
+            onChange={(e) => setMatricule(e.target.value)}
+            type="text"
+          />
+        </div>
+      </div>
+      <Button color="primary" onClick={handleSubmit}>
+        Sauvegarder
+      </Button>
+    </div>
+  );
+};
+
+const EditUserModal = ({ userId }) => {
   const [isOpen, setOpen] = useState(false);
 
   return (
@@ -347,105 +471,26 @@ const EditUserModal: FC = function () {
           <strong>Modifier les informations</strong>
         </Modal.Header>
         <Modal.Body>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="firstName">Prénom</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="firstName"
-                  name="firstName"
-                  placeholder="Mohamed Ali"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="lastName">Nom de famille</Label>
-              <div className="mt-1">
-                <TextInput id="lastName" name="lastName" placeholder="Mejdi" />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="email">E-mail</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="email"
-                  name="email"
-                  placeholder="medali.mejdi@autoroutes.tn"
-                  type="email"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="phone">Numéro de mobile</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="phone"
-                  name="phone"
-                  placeholder="+(216) 22 222 222"
-                  type="tel"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="gender">Genre</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="gender"
-                  name="gender"
-                  placeholder="Homme"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="matricule">Matricule</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="matricule"
-                  name="matricule"
-                  placeholder="XXX XXX XXX"
-                  type="text"
-                />
-              </div>
-            </div>
-            <div>
-
-              <Label htmlFor="passwordCurrent">Mot de passe actuel</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="passwordCurrent"
-                  name="passwordCurrent"
-                  placeholder="••••••••"
-                  type="password"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="passwordNew">Nouveau mot de passe</Label>
-              <div className="mt-1">
-                <TextInput
-                  id="passwordNew"
-                  name="passwordNew"
-                  placeholder="••••••••"
-                  type="password"
-                />
-              </div>
-            </div>
-
-          </div>
+          <EditUserForm userId={userId} />
+          
         </Modal.Body>
-        <Modal.Footer>
-          <Button color="primary" onClick={() => setOpen(false)}>
-            Sauvegarder
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
 };
 
-const DeleteUserModal: FC = function () {
+const DeleteUserModal: FC<{ userId: string }> = function ({ userId }) {
   const [isOpen, setOpen] = useState(false);
+
+  const deleteUser = () => {
+    axios.delete(`/users/responsables/${userId}`)
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Error deleting user:', error);
+      });
+  };
 
   return (
     <>
@@ -466,7 +511,7 @@ const DeleteUserModal: FC = function () {
               Voulez-vous vraiment supprimer ce responsable?
             </p>
             <div className="flex items-center gap-x-3">
-              <Button color="failure" onClick={() => setOpen(false)}>
+              <Button color="failure" onClick={deleteUser}>
                 Confirmer
               </Button>
               <Button color="gray" onClick={() => setOpen(false)}>
