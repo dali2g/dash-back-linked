@@ -9,10 +9,8 @@ import DashboardPage from "./views/pages/dashboard";
 import SignInPage from "./views/pages/auth/login";
 
 import React from "react";
-import UserListPage from "./views/pages/users";
 import EmployersPage from "./views/pages/employers";
-
-
+import ResponsablesPage from "./views/pages/responsables";
 
 const container = document.getElementById("root");
 
@@ -20,17 +18,16 @@ if (!container) {
   throw new Error("React root element doesn't exist!");
 }
 
-
 const root = createRoot(container);
 
 root.render(
   <StrictMode>
-    <Flowbite theme={{ theme }} >
+    <Flowbite theme={{ theme }}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SignInPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/responsables" element={<UserListPage />} />
+          <Route path="/responsables" element={<ResponsablesPage />} />
           <Route path="/employers" element={<EmployersPage />} />
         </Routes>
       </BrowserRouter>

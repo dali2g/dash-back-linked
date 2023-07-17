@@ -176,7 +176,7 @@ const SalesChart: FC = function () {
           fontWeight: 500,
         },
         formatter: function (value) {
-          return  value + "DT";
+          return value + "DT";
         },
       },
     },
@@ -256,7 +256,7 @@ const LatestCustomers: FC = function () {
               <div className="shrink-0">
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="/images/users/neil-sims.png"
+                  src="/images/responsables/neil-sims.png"
                   alt=""
                 />
               </div>
@@ -278,7 +278,7 @@ const LatestCustomers: FC = function () {
               <div className="shrink-0">
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="/images/users/bonnie-green.png"
+                  src="/images/responsables/bonnie-green.png"
                   alt=""
                 />
               </div>
@@ -300,7 +300,7 @@ const LatestCustomers: FC = function () {
               <div className="shrink-0">
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="/images/users/michael-gough.png"
+                  src="/images/responsables/michael-gough.png"
                   alt=""
                 />
               </div>
@@ -322,7 +322,7 @@ const LatestCustomers: FC = function () {
               <div className="shrink-0">
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="/images/users/thomas-lean.png"
+                  src="/images/responsables/thomas-lean.png"
                   alt=""
                 />
               </div>
@@ -344,7 +344,7 @@ const LatestCustomers: FC = function () {
               <div className="shrink-0">
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="/images/users/lana-byrd.png"
+                  src="/images/responsables/lana-byrd.png"
                   alt=""
                 />
               </div>
@@ -408,7 +408,7 @@ const AcquisitionOverview: FC = function () {
                     Top Channels
                   </Table.HeadCell>
                   <Table.HeadCell className="whitespace-nowrap border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
-                    Users
+                    Responsables
                   </Table.HeadCell>
                   <Table.HeadCell className="min-w-[140px] whitespace-nowrap rounded-r border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
                     Acquisition
