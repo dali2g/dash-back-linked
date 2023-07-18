@@ -23,7 +23,7 @@ const AddResponsableForm: FC<{ onClose: () => void }> = function ({ onClose }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
     const { password, confirmpassword } = formData;
@@ -143,7 +143,7 @@ const AddResponsableForm: FC<{ onClose: () => void }> = function ({ onClose }) {
         <div className="mt-1">
           <TextInput
             required
-            name="confirmpassword" // Updated name attribute
+            name="confirmpassword" 
             placeholder="••••••••••"
             type="password"
             value={formData.confirmpassword}
@@ -151,7 +151,7 @@ const AddResponsableForm: FC<{ onClose: () => void }> = function ({ onClose }) {
           />
         </div>
       </div>
-      <Button type="submit" color="primary">
+      <Button type="submit" color="primary" Onclick={handleSubmit}>
         Sauvegarder
       </Button>
     </form>

@@ -22,34 +22,39 @@ const EditResponsableForm: FC<EditResponsableFormProps> = function ({
   responsable,
   onClose,
 }) {
-  const [formData, setFormData] = useState({
-    firstName: responsable.firstName,
-    lastName: responsable.lastName,
-    email: responsable.email,
-    phone: responsable.phone,
-    gender: responsable.gender,
-    matricule: responsable.matricule,
-    password: responsable.password,
-    confirmPassword: responsable.password,
-  });
+  const [firstName, setFirstName] = useState(responsable.firstName);
+  const [lastName, setLastName] = useState(responsable.lastName);
+  const [email, setEmail] = useState(responsable.email);
+  const [phone, setPhone] = useState(responsable.phone);
+  const [gender, setGender] = useState(responsable.gender);
+  const [matricule, setMatricule] = useState(responsable.matricule);
+  const [password, setPassword] = useState(responsable.password);
+  const [confirmPassword, setConfirmPassword] = useState(
+    responsable.password
+  );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`/users/responsables/${responsable}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          gender,
+          matricule,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // e.preventDefault();
-    // try {
-    //   await axios.post("/users/responsables", formData);
-    //   console.log("data submitted!");
-    //   onClose();
-    // } catch (error) {
-    //   console.error("error submitting:", error);
-    // }
+      console.log("Response status:", response.status);
+      console.log("Response data:", await response.json());
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
   };
 
   return (
@@ -61,93 +66,101 @@ const EditResponsableForm: FC<EditResponsableFormProps> = function ({
         <Label htmlFor="firstName">Prénom</Label>
         <div className="mt-1">
           <TextInput
+            id="firstName"
             name="firstName"
-            placeholder="Mohamed Ali"
-            value={formData.firstName}
-            onChange={handleInputChange}
+            placeholder="Votre Prénom"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
           />
         </div>
       </div>
       <div>
-        <Label>Nom de famille</Label>
+        <Label htmlFor="lastName">Nom de famille</Label>
         <div className="mt-1">
           <TextInput
+            id="lastName"
             name="lastName"
-            placeholder="Mejdi"
-            value={formData.lastName}
-            onChange={handleInputChange}
+            placeholder="Votre Nom"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
           />
         </div>
       </div>
       <div>
-        <Label>E-mail</Label>
+        <Label htmlFor="email">E-mail</Label>
         <div className="mt-1">
           <TextInput
+            id="email"
             name="email"
-            placeholder="medali.mejdi@autoroutes.tn"
+            placeholder="Votre email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             type="email"
-            value={formData.email}
-            onChange={handleInputChange}
           />
         </div>
       </div>
       <div>
-        <Label>Numéro de mobile</Label>
+        <Label htmlFor="phone">Numéro de mobile</Label>
         <div className="mt-1">
           <TextInput
+            id="phone"
             name="phone"
-            placeholder="+(216) 22 222 222"
+            placeholder="+(216)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             type="tel"
-            value={formData.phone}
-            onChange={handleInputChange}
           />
         </div>
       </div>
       <div>
-        <Label>Genre</Label>
+        <Label htmlFor="gender">Genre</Label>
         <div className="mt-1">
           <TextInput
+            id="gender"
             name="gender"
-            placeholder="Homme"
+            placeholder="Sexe"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
             type="text"
-            value={formData.gender}
-            onChange={handleInputChange}
           />
         </div>
       </div>
       <div>
-        <Label>Matricule</Label>
+        <Label htmlFor="matricule">Matricule</Label>
         <div className="mt-1">
           <TextInput
+            id="matricule"
             name="matricule"
             placeholder="XXX XXX XXX"
+            value={matricule}
+            onChange={(e) => setMatricule(e.target.value)}
             type="text"
-            value={formData.matricule}
-            onChange={handleInputChange}
           />
         </div>
       </div>
       <div>
-        <Label>Mot de passe</Label>
+        <Label htmlFor="password">Mot de passe</Label>
         <div className="mt-1">
           <TextInput
+            id="password"
             name="password"
             placeholder="••••••••"
             type="password"
-            value={formData.password}
-            onChange={handleInputChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
       </div>
       <div>
-        <Label>Confirmer le mot de passe</Label>
+        <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
         <div className="mt-1">
           <TextInput
+            id="confirmPassword"
             name="confirmPassword"
             placeholder="••••••••"
             type="password"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
       </div>

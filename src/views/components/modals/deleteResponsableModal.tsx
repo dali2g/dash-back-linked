@@ -1,11 +1,31 @@
+import axios from "axios";
 import { Button, Modal } from "flowbite-react";
 
 import type { FC } from "react";
 import React, { useState } from "react";
 import { HiOutlineExclamationCircle, HiTrash } from "react-icons/hi";
 
-const DeleteResponsableModal: FC = function () {
+interface DeleteResponsableModalProps {
+  responsable: number;
+}
+
+const DeleteResponsableModal: FC<DeleteResponsableModalProps> = function ({
+  responsable,
+}) {
   const [isOpen, setOpen] = useState(false);
+
+  const deleteUser = () => {
+    axios
+      .delete(`/users/responsables/${responsable}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+      });
+
+    setOpen(false); // Close the modal after deletion
+  };
 
   return (
     <>
@@ -26,7 +46,7 @@ const DeleteResponsableModal: FC = function () {
               Voulez-vous vraiment supprimer ce responsable?
             </p>
             <div className="flex items-center gap-x-3">
-              <Button color="failure" onClick={() => setOpen(false)}>
+              <Button color="failure" onClick={deleteUser}>
                 Confirmer
               </Button>
               <Button color="gray" onClick={() => setOpen(false)}>

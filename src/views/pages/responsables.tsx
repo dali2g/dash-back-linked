@@ -1,7 +1,7 @@
 import { Button, Label, TextInput } from "flowbite-react";
 
 import type { FC } from "react";
-import React from "react";
+import React,{useEffect, useState} from "react";
 import {
   HiCog,
   HiDocumentDownload,
@@ -13,8 +13,25 @@ import {
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
 import AddResponsableModal from "../components/modals/addResponsableModal";
 import AllResponsablesTable from "../components/allResponsablesTable";
-
+import axios from 'axios'
 const ResponsablesPage: FC = function () {
+  const [responsables, setResponsables] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchResponsables = async () => {
+      try {
+        const response = await axios.get("http://localhost:5173/users/responsables");
+        setResponsables(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchResponsables();
+  }, []);
+ 
   return (
     <NavbarSidebarLayout isFooter={false}>
       <div className="block items-center justify-between border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
@@ -65,13 +82,9 @@ const ResponsablesPage: FC = function () {
               </div>
             </div>
             <div className="ml-auto flex items-center space-x-2 sm:space-x-3">
-              <AddResponsableModal />
-              <Button color="gray">
-                <div className="flex items-center gap-x-3">
-                  <HiDocumentDownload className="text-xl" />
-                  <span>Export</span>
-                </div>
-              </Button>
+              <AddResponsableModal onClose={function (): void {
+                throw new Error("Function not implemented.");
+              } }/>
             </div>
           </div>
         </div>
@@ -80,7 +93,12 @@ const ResponsablesPage: FC = function () {
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow">
-              <AllResponsablesTable />
+              {isLoading ?(
+                <p>Loading...</p>
+              ): (
+                
+                <AllResponsablesTable responsables={responsables} />
+              )}
             </div>
           </div>
         </div>
