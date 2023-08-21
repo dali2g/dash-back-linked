@@ -1,6 +1,6 @@
-// Import necessary modules
 import express from 'express';
 import userRouter from './src/routes/userRouter.js';
+import employerRouter from './src/routes/employerRouter.js'
 import { connect } from './db.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -15,6 +15,8 @@ app.use(cors());
 
 // Use the userRouter for user-related routes
 app.use('/users', userRouter); 
+
+app.use('/employers',employerRouter);
 
 // Serve the index.html file for all other routes
 app.get('/*', (req, res) => {

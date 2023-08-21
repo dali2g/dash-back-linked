@@ -1,27 +1,61 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, Card, Checkbox, Label, TextInput } from "flowbite-react";
 import React, { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import type { FC } from "react";
 
+interface SignInProps {
+  setUser: React.Dispatch<React.SetStateAction<{
+    isAuthenticated: boolean;
+    email: string;
+    password: string;
+    role: string; // Add role property
+  }>>;
+}
 
-interface FormProps { }
-const SignInPage: FC<FormProps> = () => {
-
-  const [userNameState, setUserNameState] = useState('')
-  const [passwordState, setPasswordState] = useState('')
+const SignInPage: FC<SignInProps> = ({ setUser }) => {
+  const [userNameState, setUserNameState] = useState('');
+  const [passwordState, setPasswordState] = useState('');
   const [showAlert, setShowAlert] = useState(false);
-
 
   const navigate = useNavigate();
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (userNameState === 'admin' && passwordState === 'admin') {
-      navigate('/dashboard');
-
-    }
-    else {
+  
+    try {
+      const response = await fetch('http://localhost:5173/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: userNameState,
+          password: passwordState,
+        }),
+      });
+  
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('Response Data:', responseData);
+  
+        // Determine the user's role based on email
+        const role = responseData.email === 'admin@admin.com' ? 'admin' : 'user';
+  
+        const updatedUser = {
+          isAuthenticated: true,
+          email: responseData.email,
+          password: responseData.password,
+          role: role,
+        };
+  
+        setUser(updatedUser);
+  
+        navigate('/dashboard');
+      } else {
+        setShowAlert(true);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
       setShowAlert(true);
     }
   }

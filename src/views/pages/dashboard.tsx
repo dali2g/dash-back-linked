@@ -582,10 +582,10 @@ const LatestTransactions: FC = function () {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-            Latest Transactions
+          Dernières transactions
           </h3>
           <span className="text-base font-normal text-gray-600 dark:text-gray-400">
-            This is a list of latest transactions
+          Ceci est une liste des dernières transactions
           </span>
         </div>
         <div className="shrink-0">
@@ -593,7 +593,7 @@ const LatestTransactions: FC = function () {
             href="#"
             className="rounded-lg p-2 text-sm font-medium text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
           >
-            View all
+            Voirs
           </a>
         </div>
       </div>
@@ -607,24 +607,24 @@ const LatestTransactions: FC = function () {
               >
                 <Table.Head className="bg-gray-50 dark:bg-gray-700">
                   <Table.HeadCell>Transaction</Table.HeadCell>
-                  <Table.HeadCell>Date &amp; Time</Table.HeadCell>
-                  <Table.HeadCell>Amount</Table.HeadCell>
-                  <Table.HeadCell>Status</Table.HeadCell>
+                  <Table.HeadCell>Date &amp; Temps</Table.HeadCell>
+                  <Table.HeadCell>Montant</Table.HeadCell>
+                  <Table.HeadCell>Statut</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="bg-white dark:bg-gray-800">
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Bonnie Green</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 23, 2021
+                      Avr 23, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       2300DT
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
@@ -633,110 +633,110 @@ const LatestTransactions: FC = function () {
                       <span className="font-semibold">#00910</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 23, 2021
+                      Avr 23, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       -DT670
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment failed from{" "}
+                      Payement échoué de{" "}
                       <span className="font-semibold">#087651</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 18, 2021
+                      Avr 18, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       DT234
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="failure">Cancelled</Badge>
+                      <Badge color="failure">Annuler</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Lana Byrd</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 15, 2021
+                      Avr 15, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       DT5000
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
                       <span className="mr-2 rounded-md bg-purple-100 py-0.5 px-2.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
-                        In progress
+                        En Cours
                       </span>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Jese Leos</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 15, 2021
+                      Avr 15, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       DT2300
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">THEMESBERG LLC</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 11, 2021
+                      Avr 11, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       DT560
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Lana Lysle</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 6, 2021
+                      Avr 6, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       DT1437
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment to{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Joseph Mcfall</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Apr 1, 2021
+                      Avr 1, 2021
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
                       DT980
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Alphabet LLC</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -747,13 +747,13 @@ const LatestTransactions: FC = function () {
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
                       <span className="mr-2 rounded-md bg-purple-100 py-0.5 px-2.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
-                        In progress
+                        En Cours
                       </span>
                     </Table.Cell>
                   </Table.Row>
                   <Table.Row>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment from{" "}
+                      Payement de{" "}
                       <span className="font-semibold">Bonnie Green</span>
                     </Table.Cell>
                     <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -763,7 +763,7 @@ const LatestTransactions: FC = function () {
                       DT560
                     </Table.Cell>
                     <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completed</Badge>
+                      <Badge color="success">Completé</Badge>
                     </Table.Cell>
                   </Table.Row>
                 </Table.Body>

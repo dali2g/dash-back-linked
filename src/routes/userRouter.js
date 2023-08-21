@@ -84,6 +84,33 @@ userRouter.put('/responsables/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while updating the user' });
   }
 });
+userRouter.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const db = getDB();
+    const collection = db.collection('Responsables');
+
+    const user = await collection.findOne({ email });
+
+    if (user && user.password === password) {
+      // Successfully authenticated
+      res.status(200).json({
+        message: 'Login successful',
+        user: {
+          email: user.email,
+          password: user.password,
+          // Include other user details here
+        },
+      });
+    } else {
+      // Authentication failed
+      res.status(401).json({ error: 'Invalid credentials' });
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'An error occurred during login' });
+  }
+});
 
 
 

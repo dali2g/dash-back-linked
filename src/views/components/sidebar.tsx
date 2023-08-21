@@ -2,9 +2,12 @@ import { Sidebar } from "flowbite-react";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import {
+  HiChartBar,
+  HiChat,
   HiCollection,
   HiLogout,
   HiShoppingBag,
+  HiUser,
   HiUsers,
 } from "react-icons/hi";
 
@@ -30,19 +33,34 @@ const ExampleSidebar: FC = function () {
             >
               Acceuil
             </Sidebar.Item>
-            <Sidebar.Item
-              href="/employers"
-              icon={HiShoppingBag}
-
-            >
-              Liste de pointage
-            </Sidebar.Item>
+          
             <Sidebar.Item
               href="/responsables"
               icon={HiUsers}
             >
               Liste des responsables
             </Sidebar.Item>
+            <Sidebar.Item
+              href="/employers"
+              icon={HiShoppingBag}
+
+            >
+              Liste des employées
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="/profils"
+              icon={HiUser}
+
+            >
+             Profils
+            </Sidebar.Item>
+          {/*   <Sidebar.Item
+              href="/rapports"
+              icon={HiChartBar}
+
+            >
+             Rapports
+            </Sidebar.Item> */}
             <Sidebar.Item
               href="/"
               icon={HiLogout}>
