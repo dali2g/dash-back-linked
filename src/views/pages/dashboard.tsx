@@ -3,7 +3,21 @@ import { Badge, Dropdown, Table, useTheme } from "flowbite-react";
 import type { FC } from "react";
 import Chart from "react-apexcharts";
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
-import React from "react";
+import React ,{ useState,useEffect } from "react"
+import Papa from 'papaparse'
+// Add this interface at the top of your file
+interface EmployeeData {
+  Matricule: string;
+  Site: string;
+  Echelon: string;
+  Collège: string;
+  Sexe: string;
+  Catégorie: string;
+  'Type Contrat': string; // Note: Use quotes for column names with spaces
+  Fonction: string;
+  Grade: string;
+}
+
 
 const DashboardPage: FC = function () {
   return (
@@ -13,25 +27,55 @@ const DashboardPage: FC = function () {
         <div className="my-6">
           <LatestTransactions />
         </div>
-        <LatestCustomers />
         <div className="my-6">
-          <AcquisitionOverview />
+        <AcquisitionOverview/>;
         </div>
       </div>
     </NavbarSidebarLayout>
   );
 };
-
 const SalesThisWeek: FC = function () {
+  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Update the URL to fetch CSV data from your Express.js server
+        const response = await fetch('/data/data.csv');
+
+        if (!response || !response.body) {
+          console.error('CSV data not available.');
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const text = new TextDecoder('utf-8').decode(result.value);
+
+        const { data, errors } = Papa.parse(text, { header: true });
+
+        if (errors.length === 0) {
+          setEmployeeData(data);
+        } else {
+          console.error('CSV parsing error:', errors);
+        }
+      } catch (error) {
+        console.error('Error fetching CSV:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6 xl:p-8">
       <div className="mb-4 flex items-center justify-between">
         <div className="shrink-0">
           <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
-            45,385DT
+            {employeeData.length > 0 ? employeeData[0].Matricule : 'Loading...'}
           </span>
           <h3 className="text-base font-normal text-gray-600 dark:text-gray-400">
-            Sales this week
+            Matricule of the first employee
           </h3>
         </div>
         <div className="flex flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
@@ -80,140 +124,103 @@ const SalesThisWeek: FC = function () {
   );
 };
 
+
 const SalesChart: FC = function () {
-  const { mode } = useTheme();
-  const isDarkTheme = mode === "dark";
+  const [csvData, setCsvData] = useState<EmployeeData[]>([]);
 
-  const borderColor = isDarkTheme ? "#374151" : "#F3F4F6";
-  const labelColor = isDarkTheme ? "#93ACAF" : "#6B7280";
-  const opacityFrom = isDarkTheme ? 0 : 1;
-  const opacityTo = isDarkTheme ? 0 : 1;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Update the URL to fetch CSV data from your Express.js server
+        const response = await fetch('/data/data.csv');
 
-  const options: ApexCharts.ApexOptions = {
-    stroke: {
-      curve: "smooth",
-    },
-    chart: {
-      type: "area",
-      fontFamily: "Inter, sans-serif",
-      foreColor: labelColor,
-      toolbar: {
-        show: false,
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        opacityFrom,
-        opacityTo,
-        type: "vertical",
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    tooltip: {
-      style: {
-        fontSize: "14px",
+        if (!response || !response.body) {
+          console.error('CSV data not available.');
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const text = new TextDecoder('utf-8').decode(result.value);
+
+        const { data, errors } = Papa.parse(text, { header: true });
+
+        if (errors.length === 0) {
+          // Limit the data to 10% of the total records
+          const slicedData = data.slice(0, Math.ceil(data.length * 0.5  ));
+          setCsvData(slicedData);
+        } else {
+          console.error('CSV parsing error:', errors);
+        }
+      } catch (error) {
+        console.error('Error fetching CSV:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+    // Group the data by 'Type Contrat' and count occurrences
+    const contratCounts: Record<string, number> = {};
+    csvData.forEach((row) => {
+      const contrat = row['Type Contrat'];
+      contratCounts[contrat] = (contratCounts[contrat] || 0) + 1;
+    });
+  
+    // Prepare data for the chart
+    const contratTypes = Object.keys(contratCounts);
+    const contratCountsArray = contratTypes.map((contrat) => contratCounts[contrat]);
+  
+    const options: ApexCharts.ApexOptions = {
+      chart: {
+        type: "bar",
         fontFamily: "Inter, sans-serif",
-      },
-    },
-    grid: {
-      show: true,
-      borderColor: borderColor,
-      strokeDashArray: 1,
-      padding: {
-        left: 35,
-        bottom: 15,
-      },
-    },
-    markers: {
-      size: 5,
-      strokeColors: "#ffffff",
-      hover: {
-        size: undefined,
-        sizeOffset: 3,
-      },
-    },
-    xaxis: {
-      categories: [
-        "01 Feb",
-        "02 Feb",
-        "03 Feb",
-        "04 Feb",
-        "05 Feb",
-        "06 Feb",
-        "07 Feb",
-      ],
-      labels: {
-        style: {
-          colors: [labelColor],
-          fontSize: "14px",
-          fontWeight: 500,
+        toolbar: {
+          show: false,
         },
       },
-      axisBorder: {
-        color: borderColor,
-      },
-      axisTicks: {
-        color: borderColor,
-      },
-      crosshairs: {
-        show: true,
-        position: "back",
-        stroke: {
-          color: borderColor,
-          width: 1,
-          dashArray: 10,
-        },
-      },
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: [labelColor],
-          fontSize: "14px",
-          fontWeight: 500,
-        },
-        formatter: function (value) {
-          return value + "DT";
-        },
-      },
-    },
-    legend: {
-      fontSize: "14px",
-      fontWeight: 500,
-      fontFamily: "Inter, sans-serif",
-      labels: {
-        colors: [labelColor],
-      },
-      itemMargin: {
-        horizontal: 10,
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 1024,
-        options: {
-          xaxis: {
-            labels: {
-              show: false,
-            },
+      xaxis: {
+        categories: contratTypes,
+        labels: {
+          style: {
+            fontSize: "14px",
+            fontWeight: 500,
           },
         },
       },
-    ],
+      yaxis: {
+        title: {
+          text: "Nombre Des Employées",
+          style: {
+            fontSize: "14px",
+            fontWeight: 500,
+          },
+        },
+        labels: {
+          style: {
+            fontSize: "14px",
+            fontWeight: 500,
+          },
+        },
+      },
+      legend: {
+        fontSize: "14px",
+        fontWeight: 500,
+        labels: {
+          colors: ["#6B7280"], // Customize label colors
+        },
+      },
+    };
+  
+    const series = [{
+      name: "Employees",
+      data: contratCountsArray,
+      color: "#1A56DB", // Customize the color as needed
+    }];
+  
+    return <Chart height={420} options={options} series={series} />;
   };
-  const series = [
-    {
-      name: "Revenue",
-      data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
-      color: "#1A56DB",
-    },
-  ];
 
-  return <Chart height={420} options={options} series={series} type="area" />;
-};
 
 const Datepicker: FC = function () {
   return (
@@ -235,168 +242,64 @@ const Datepicker: FC = function () {
   );
 };
 
-const LatestCustomers: FC = function () {
-  return (
-    <div className="mb-4 h-full rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-xl font-bold leading-none text-gray-900 dark:text-white">
-          Latest Customers
-        </h3>
-        <a
-          href="#"
-          className="inline-flex items-center rounded-lg p-2 text-sm font-medium text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
-        >
-          View all
-        </a>
-      </div>
-      <div className="flow-root">
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          <li className="py-3 sm:py-4">
-            <div className="flex items-center space-x-4">
-              <div className="shrink-0">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="/images/responsables/neil-sims.png"
-                  alt=""
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                  Neil Sims
-                </p>
-                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                  email@flowbite.com
-                </p>
-              </div>
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                320DT
-              </div>
-            </div>
-          </li>
-          <li className="py-3 sm:py-4">
-            <div className="flex items-center space-x-4">
-              <div className="shrink-0">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="/images/responsables/bonnie-green.png"
-                  alt=""
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                  Bonnie Green
-                </p>
-                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                  email@flowbite.com
-                </p>
-              </div>
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                3467DT
-              </div>
-            </div>
-          </li>
-          <li className="py-3 sm:py-4">
-            <div className="flex items-center space-x-4">
-              <div className="shrink-0">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="/images/responsables/michael-gough.png"
-                  alt=""
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                  Michael Gough
-                </p>
-                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                  email@flowbite.com
-                </p>
-              </div>
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                67DT
-              </div>
-            </div>
-          </li>
-          <li className="py-3 sm:py-4">
-            <div className="flex items-center space-x-4">
-              <div className="shrink-0">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="/images/responsables/thomas-lean.png"
-                  alt=""
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                  Thomes Lean
-                </p>
-                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                  email@flowbite.com
-                </p>
-              </div>
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                2367DT
-              </div>
-            </div>
-          </li>
-          <li className="py-3 sm:py-4">
-            <div className="flex items-center space-x-4">
-              <div className="shrink-0">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="/images/responsables/lana-byrd.png"
-                  alt=""
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                  Lana Byrd
-                </p>
-                <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-                  email@flowbite.com
-                </p>
-              </div>
-              <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                367DT
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div className="flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
-        <Datepicker />
-        <div className="shrink-0">
-          <a
-            href="#"
-            className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 sm:text-sm"
-          >
-            Sales Report
-            <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-};
+
 
 const AcquisitionOverview: FC = function () {
+  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
+  const [gradeAcquisitions, setGradeAcquisitions] = useState<{ [grade: string]: number }>({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Update the URL to fetch CSV data from your Express.js server
+        const response = await fetch('/data/data.csv');
+
+        if (!response || !response.body) {
+          console.error('CSV data not available.');
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const text = new TextDecoder('utf-8').decode(result.value);
+
+        const { data, errors } = Papa.parse(text, { header: true });
+
+        if (errors.length === 0) {
+          setEmployeeData(data);
+        } else {
+          console.error('CSV parsing error:', errors);
+        }
+      } catch (error) {
+        console.error('Error fetching CSV:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Calculate the grade acquisitions
+    const gradeCounts: { [grade: string]: number } = {};
+
+    employeeData.forEach((row) => {
+      const grade = row.Grade;
+      if (gradeCounts[grade]) {
+        gradeCounts[grade]++;
+      } else {
+        gradeCounts[grade] = 1;
+      }
+    });
+
+    setGradeAcquisitions(gradeCounts);
+  }, [employeeData]);
+
+  const totalAcquisitions = Object.values(gradeAcquisitions).reduce((acc, count) => acc + count, 0);
+
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6 xl:p-8">
       <h3 className="mb-6 text-xl font-bold leading-none text-gray-900 dark:text-white">
-        Acquisition Overview
+      Aperçu du domaine de travail
       </h3>
       <div className="flex flex-col">
         <div className="overflow-x-auto rounded-lg">
@@ -405,187 +308,121 @@ const AcquisitionOverview: FC = function () {
               <Table className="min-w-full table-fixed">
                 <Table.Head>
                   <Table.HeadCell className="whitespace-nowrap rounded-l border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
-                    Top Channels
+                    Role
                   </Table.HeadCell>
                   <Table.HeadCell className="whitespace-nowrap border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
-                    Responsables
+                    Nombre des Employées
                   </Table.HeadCell>
-                  <Table.HeadCell className="min-w-[140px] whitespace-nowrap rounded-r border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
-                    Acquisition
+                  <Table.HeadCell className="whitespace-nowrap rounded-r border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
+                    Percentage
                   </Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y divide-gray-100 dark:divide-gray-700">
-                  <Table.Row className="text-gray-500 dark:text-gray-400">
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
-                      Organic Search
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
-                      5,649
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
-                      <div className="flex items-center">
-                        <span className="mr-2 text-xs font-medium">30%</span>
-                        <div className="relative w-full">
-                          <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-2 rounded-sm bg-primary-700"
-                              style={{ width: "30%" }}
-                            />
+                  {Object.keys(gradeAcquisitions).map((grade) => (
+                    <Table.Row key={grade} className="text-gray-500 dark:text-gray-400">
+                      <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
+                        {grade}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
+                        {gradeAcquisitions[grade]}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
+                        <div className="flex items-center">
+                          <span className="mr-2 text-xs font-medium">
+                            {(gradeAcquisitions[grade] / totalAcquisitions * 100).toFixed(2)}%
+                          </span>
+                          <div className="relative w-full">
+                            <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
+                              <div
+                                className="h-2 rounded-sm bg-primary-700"
+                                style={{
+                                  width: `${(gradeAcquisitions[grade] / totalAcquisitions * 100).toFixed(2)}%`,
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="text-gray-500 dark:text-gray-400">
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
-                      Referral
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
-                      4,025
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
-                      <div className="flex items-center">
-                        <span className="mr-2 text-xs font-medium">24%</span>
-                        <div className="relative w-full">
-                          <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-2 rounded-sm bg-orange-300"
-                              style={{ width: "24%" }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="text-gray-500 dark:text-gray-400">
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
-                      Direct
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
-                      3,105
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
-                      <div className="flex items-center">
-                        <span className="mr-2 text-xs font-medium">18%</span>
-                        <div className="relative w-full">
-                          <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-2 rounded-sm bg-teal-400"
-                              style={{ width: "18%" }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="text-gray-500 dark:text-gray-400">
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
-                      Social
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
-                      1251
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
-                      <div className="flex items-center">
-                        <span className="mr-2 text-xs font-medium">12%</span>
-                        <div className="relative w-full">
-                          <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-2 rounded-sm bg-pink-600"
-                              style={{ width: "12%" }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="text-gray-500 dark:text-gray-400">
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
-                      Other
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
-                      734
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
-                      <div className="flex items-center">
-                        <span className="mr-2 text-xs font-medium">9%</span>
-                        <div className="relative w-full">
-                          <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-2 rounded-sm bg-indigo-600"
-                              style={{ width: "9%" }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className="text-gray-500 dark:text-gray-400">
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 text-left align-middle text-sm font-normal">
-                      Email
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs font-medium text-gray-900 dark:text-white">
-                      456
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap border-t-0 p-4 align-middle text-xs">
-                      <div className="flex items-center">
-                        <span className="mr-2 text-xs font-medium">7%</span>
-                        <div className="relative w-full">
-                          <div className="h-2 w-full rounded-sm bg-gray-200 dark:bg-gray-700">
-                            <div
-                              className="h-2 rounded-sm bg-purple-500"
-                              style={{ width: "7%" }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </Table.Cell>
-                  </Table.Row>
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
-        <Datepicker />
-        <div className="shrink-0">
-          <a
-            href="#"
-            className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 sm:text-sm"
-          >
-            Acquisition Report
-            <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </a>
-        </div>
-      </div>
     </div>
   );
 };
 
+
 const LatestTransactions: FC = function () {
+  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch CSV data containing Sexe, Grade, Echelon, and Fonction
+        const response = await fetch('/data/data.csv'); // Update the URL
+
+        if (!response || !response.body) {
+          console.error('CSV data not available.');
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const text = new TextDecoder('utf-8').decode(result.value);
+
+        const { data, errors } = Papa.parse(text, { header: true });
+
+        if (errors.length === 0) {
+          // Randomly select 20 employees from the fetched data
+          const randomEmployees = getRandomEmployees(data, 20);
+          setEmployeeData(randomEmployees);
+        } else {
+          console.error('CSV parsing error:', errors);
+        }
+      } catch (error) {
+        console.error('Error fetching CSV:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Function to generate random badge colors
+  const getRandomBadgeColor = (): string => {
+    const colors = ["success", "failure", "warning", "info", "primary"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  // Function to randomly select 'count' employees from data
+  const getRandomEmployees = (data: EmployeeData[], count: number): EmployeeData[] => {
+    if (count >= data.length) {
+      return data;
+    }
+
+    const randomIndexes: number[] = [];
+    while (randomIndexes.length < count) {
+      const randomIndex = Math.floor(Math.random() * data.length);
+      if (!randomIndexes.includes(randomIndex)) {
+        randomIndexes.push(randomIndex);
+      }
+    }
+
+    return randomIndexes.map((index) => data[index]);
+  };
+
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6 xl:p-8">
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-          Dernières transactions
+            Dernières transactions
           </h3>
           <span className="text-base font-normal text-gray-600 dark:text-gray-400">
-          Ceci est une liste des dernières transactions
+            Ceci est une liste des dernières transactions
           </span>
         </div>
         <div className="shrink-0">
@@ -593,7 +430,7 @@ const LatestTransactions: FC = function () {
             href="#"
             className="rounded-lg p-2 text-sm font-medium text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
           >
-            Voirs
+            Voir
           </a>
         </div>
       </div>
@@ -606,166 +443,32 @@ const LatestTransactions: FC = function () {
                 className="min-w-full divide-y divide-gray-200 dark:divide-gray-600"
               >
                 <Table.Head className="bg-gray-50 dark:bg-gray-700">
-                  <Table.HeadCell>Transaction</Table.HeadCell>
-                  <Table.HeadCell>Date &amp; Temps</Table.HeadCell>
-                  <Table.HeadCell>Montant</Table.HeadCell>
-                  <Table.HeadCell>Statut</Table.HeadCell>
+                  <Table.HeadCell>Matricule</Table.HeadCell>
+                  <Table.HeadCell>Sexe</Table.HeadCell>
+                  <Table.HeadCell>Grade</Table.HeadCell>
+                  <Table.HeadCell>Echelon</Table.HeadCell>
+                  <Table.HeadCell>Fonction</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="bg-white dark:bg-gray-800">
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Bonnie Green</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 23, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      2300DT
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payment refund to{" "}
-                      <span className="font-semibold">#00910</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 23, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      -DT670
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement échoué de{" "}
-                      <span className="font-semibold">#087651</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 18, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT234
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="failure">Annuler</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Lana Byrd</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 15, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT5000
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <span className="mr-2 rounded-md bg-purple-100 py-0.5 px-2.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
-                        En Cours
-                      </span>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Jese Leos</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 15, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT2300
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">THEMESBERG LLC</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 11, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT560
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Lana Lysle</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 6, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT1437
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Joseph Mcfall</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Avr 1, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT980
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Alphabet LLC</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Mar 23, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT11,436
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <span className="mr-2 rounded-md bg-purple-100 py-0.5 px-2.5 text-xs font-medium text-purple-800 dark:bg-purple-200">
-                        En Cours
-                      </span>
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                      Payement de{" "}
-                      <span className="font-semibold">Bonnie Green</span>
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                      Mar 23, 2021
-                    </Table.Cell>
-                    <Table.Cell className="whitespace-nowrap p-4 text-sm font-semibold text-gray-900 dark:text-white">
-                      DT560
-                    </Table.Cell>
-                    <Table.Cell className="flex whitespace-nowrap p-4">
-                      <Badge color="success">Completé</Badge>
-                    </Table.Cell>
-                  </Table.Row>
+                  {employeeData.map((employee) => (
+                    <Table.Row key={employee.Matricule}>
+                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
+                        {employee.Matricule}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                        {employee.Sexe}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                        {employee.Grade}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                        {employee.Echelon}
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
+                        {employee.Fonction}
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
                 </Table.Body>
               </Table>
             </div>
@@ -777,7 +480,7 @@ const LatestTransactions: FC = function () {
         <div className="shrink-0">
           <a
             href="#"
-            className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 sm:text-sm"
+            className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover-bg-gray-700 sm:text-sm"
           >
             Transactions Report
             <svg
@@ -800,5 +503,7 @@ const LatestTransactions: FC = function () {
     </div>
   );
 };
+
+
 
 export default DashboardPage;
