@@ -484,7 +484,7 @@ const LatestTransactions: FC = function () {
           >
             Transactions Report
             <svg
-              className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
+              className="ml-1 h-3 w-4 sm:h-5 sm:w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
