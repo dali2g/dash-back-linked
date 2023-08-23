@@ -5,8 +5,7 @@ import { connect } from './db.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import cors from 'cors';
-
-import { readFileSync } from 'fs'; // Import the 'readFileSync' function
+import { readFileSync } from 'fs'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

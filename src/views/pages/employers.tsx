@@ -64,7 +64,6 @@ const EmployersPage: FC = function () {
           <div className="flex items-center">
             <div className="p-5 mt-2">
               <Label htmlFor="text">
-                Chercher
               </Label>
               <TextInput
                 id="text"
@@ -75,8 +74,14 @@ const EmployersPage: FC = function () {
             <div className="flex justify-between items-center border-b border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
               <Button color="dark" className="text-sm py-1 px-2">
                 <div className="flex items-center gap-x-2">
-                  <HiArchive className="text-lg" />
-                  <p className="mx-1 md:mx-2">Générer Rapports</p>
+                <a
+                href="/data/rapports.pdf" 
+                download="rapports.pdf"   
+                className="text-sm py-1 px-2 inline-flex items-center justify-center rounded-lg text-white focus:ring-4"
+              >
+                <HiArchive className="text-lg" />
+                <p className="mx-1 md:mx-2">Générer Rapports</p>
+              </a>
                 </div>
               </Button>
               <div className="ml-4 flex items-center space-x-2 sm:space-x-3">
