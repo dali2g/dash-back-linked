@@ -5,7 +5,6 @@ import Chart from "react-apexcharts";
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
 import React ,{ useState,useEffect } from "react"
 import Papa from 'papaparse'
-// Add this interface at the top of your file
 interface EmployeeData {
   Matricule: string;
   Site: string;
@@ -13,7 +12,7 @@ interface EmployeeData {
   Collège: string;
   Sexe: string;
   Catégorie: string;
-  'Type Contrat': string; // Note: Use quotes for column names with spaces
+  'Type Contrat': string; 
   Fonction: string;
   Grade: string;
 }
@@ -40,7 +39,6 @@ const SalesThisWeek: FC = function () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Update the URL to fetch CSV data from your Express.js server
         const response = await fetch('/data/data.csv');
 
         if (!response || !response.body) {
@@ -72,10 +70,10 @@ const SalesThisWeek: FC = function () {
       <div className="mb-4 flex items-center justify-between">
         <div className="shrink-0">
           <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
-            {employeeData.length > 0 ? employeeData[0].Matricule : 'Loading...'}
+            {employeeData.length > 0 ? employeeData[50].Matricule : 'Loading...'}
           </span>
           <h3 className="text-base font-normal text-gray-600 dark:text-gray-400">
-            Matricule of the first employee
+            Matricule du 1er employé
           </h3>
         </div>
         <div className="flex flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
@@ -96,13 +94,12 @@ const SalesThisWeek: FC = function () {
       </div>
       <SalesChart />
       <div className="mt-5 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-700 sm:pt-6">
-        <Datepicker />
         <div className="shrink-0">
           <a
             href="#"
             className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700 sm:text-sm"
           >
-            Sales Report
+            Rapports
             <svg
               className="ml-1 h-4 w-4 sm:h-5 sm:w-5"
               fill="none"
@@ -131,7 +128,7 @@ const SalesChart: FC = function () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Update the URL to fetch CSV data from your Express.js server
+       
         const response = await fetch('/data/data.csv');
 
         if (!response || !response.body) {
@@ -160,14 +157,12 @@ const SalesChart: FC = function () {
     fetchData();
   }, []);
 
-    // Group the data by 'Type Contrat' and count occurrences
     const contratCounts: Record<string, number> = {};
     csvData.forEach((row) => {
       const contrat = row['Type Contrat'];
       contratCounts[contrat] = (contratCounts[contrat] || 0) + 1;
     });
   
-    // Prepare data for the chart
     const contratTypes = Object.keys(contratCounts);
     const contratCountsArray = contratTypes.map((contrat) => contratCounts[contrat]);
   
@@ -207,40 +202,21 @@ const SalesChart: FC = function () {
         fontSize: "14px",
         fontWeight: 500,
         labels: {
-          colors: ["#6B7280"], // Customize label colors
+          colors: ["#6B7280"],
         },
       },
     };
   
     const series = [{
-      name: "Employees",
+      name: "Employés",
       data: contratCountsArray,
-      color: "#1A56DB", // Customize the color as needed
+      color: "#1A56DB", 
     }];
   
     return <Chart height={420} options={options} series={series} />;
   };
 
 
-const Datepicker: FC = function () {
-  return (
-    <span className="text-sm text-gray-600">
-      <Dropdown inline label="Last 7 days">
-        <Dropdown.Item>
-          <strong>Sep 16, 2021 - Sep 22, 2021</strong>
-        </Dropdown.Item>
-        <Dropdown.Divider />
-        <Dropdown.Item>Yesterday</Dropdown.Item>
-        <Dropdown.Item>Today</Dropdown.Item>
-        <Dropdown.Item>Last 7 days</Dropdown.Item>
-        <Dropdown.Item>Last 30 days</Dropdown.Item>
-        <Dropdown.Item>Last 90 days</Dropdown.Item>
-        <Dropdown.Divider />
-        <Dropdown.Item>Custom...</Dropdown.Item>
-      </Dropdown>
-    </span>
-  );
-};
 
 
 
@@ -308,7 +284,7 @@ const AcquisitionOverview: FC = function () {
               <Table className="min-w-full table-fixed">
                 <Table.Head>
                   <Table.HeadCell className="whitespace-nowrap rounded-l border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
-                    Role
+                    Rôle
                   </Table.HeadCell>
                   <Table.HeadCell className="whitespace-nowrap border-x-0 bg-gray-50 py-3 px-4 text-left align-middle text-xs font-semibold uppercase text-gray-700 dark:bg-gray-700 dark:text-white">
                     Nombre des Employées
@@ -347,6 +323,28 @@ const AcquisitionOverview: FC = function () {
                   ))}
                 </Table.Body>
               </Table>
+              <div className="shrink-0">
+          <a
+            href="/employers" 
+            className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover-bg-gray-700 sm:text-sm"
+          >
+            Voir tous les employés
+            <svg
+              className="ml-1 h-3 w-4 sm:h-5 sm:w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </a>
+        </div>
             </div>
           </div>
         </div>
@@ -363,7 +361,7 @@ const LatestTransactions: FC = function () {
     const fetchData = async () => {
       try {
         // Fetch CSV data containing Sexe, Grade, Echelon, and Fonction
-        const response = await fetch('/data/data.csv'); // Update the URL
+        const response = await fetch('/data/data.csv'); 
 
         if (!response || !response.body) {
           console.error('CSV data not available.');
@@ -397,7 +395,6 @@ const LatestTransactions: FC = function () {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  // Function to randomly select 'count' employees from data
   const getRandomEmployees = (data: EmployeeData[], count: number): EmployeeData[] => {
     if (count >= data.length) {
       return data;
@@ -419,15 +416,15 @@ const LatestTransactions: FC = function () {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-            Dernières transactions
+            Listes des employés
           </h3>
           <span className="text-base font-normal text-gray-600 dark:text-gray-400">
-            Ceci est une liste des dernières transactions
+            Ceci est une liste des employés
           </span>
         </div>
         <div className="shrink-0">
           <a
-            href="#"
+            href="/employers"
             className="rounded-lg p-2 text-sm font-medium text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
           >
             Voir
@@ -476,13 +473,12 @@ const LatestTransactions: FC = function () {
         </div>
       </div>
       <div className="flex items-center justify-between pt-3 sm:pt-6">
-        <Datepicker />
         <div className="shrink-0">
           <a
-            href="#"
+            href="#" // I should add link for export excel here
             className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover-bg-gray-700 sm:text-sm"
           >
-            Transactions Report
+            Export
             <svg
               className="ml-1 h-3 w-4 sm:h-5 sm:w-5"
               fill="none"

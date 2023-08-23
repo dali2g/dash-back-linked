@@ -46,47 +46,44 @@ const MainContentFooter: FC = function () {
         <div className="flex w-full flex-col gap-y-6 lg:flex-row lg:justify-between lg:gap-y-0">
           <Footer.LinkGroup>
             <Footer.Link href="#" className="mr-3 mb-3 lg:mb-0">
-              Terms and conditions
+            Termes et conditions
             </Footer.Link>
             <Footer.Link href="#" className="mr-3 mb-3 lg:mb-0">
-              Privacy Policy
+            Politique de confidentialité
             </Footer.Link>
             <Footer.Link href="#" className="mr-3">
-              Licensing
+            Licence
             </Footer.Link>
-            <Footer.Link href="#" className="mr-3">
-              Cookie Policy
-            </Footer.Link>
-            <Footer.Link href="#">Contact</Footer.Link>
+            <Footer.Link href="/dashboard">Accueil</Footer.Link>
           </Footer.LinkGroup>
           <Footer.LinkGroup>
             <div className="flex gap-x-1">
               <Footer.Link
-                href="#"
+                href="https://www.facebook.com"
                 className="hover:[&>*]:text-black dark:hover:[&>*]:text-gray-300"
               >
                 <MdFacebook className="text-lg" />
               </Footer.Link>
               <Footer.Link
-                href="#"
+                href="https://www.instagram.com"
                 className="hover:[&>*]:text-black dark:hover:[&>*]:text-gray-300"
               >
                 <FaInstagram className="text-lg" />
               </Footer.Link>
               <Footer.Link
-                href="#"
+                href="https://www.twitter.com"
                 className="hover:[&>*]:text-black dark:hover:[&>*]:text-gray-300"
               >
                 <FaTwitter className="text-lg" />
               </Footer.Link>
               <Footer.Link
-                href="#"
+                href="https://www.github.com"
                 className="hover:[&>*]:text-black dark:hover:[&>*]:text-gray-300"
               >
                 <FaGithub className="text-lg" />
               </Footer.Link>
               <Footer.Link
-                href="#"
+                href=""
                 className="hover:[&>*]:text-black dark:hover:[&>*]:text-gray-300"
               >
                 <FaDribbble className="text-lg" />

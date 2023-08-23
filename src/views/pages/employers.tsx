@@ -18,6 +18,8 @@ import AddEmployerModal from "../components/modals/addEmployerModal";
 const EmployersPage: FC = function () {
   const [employers, setEmployers] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1); 
+  const itemsPerPage = 20;
 
   useEffect(() => {
     const fetchEmployers = async () => {
@@ -32,6 +34,11 @@ const EmployersPage: FC = function () {
 
     fetchEmployers();
   }, []);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const displayedEmployers = employers.slice(startIndex, endIndex);
 
   return (
     <NavbarSidebarLayout isFooter={false}>
@@ -55,34 +62,14 @@ const EmployersPage: FC = function () {
           </h1>
 
           <div className="flex items-center">
-            <div className="p-5 mt-5 flex-grow">
+            <div className="p-5 mt-2">
               <Label htmlFor="text">
-                Transaction se rendre jusqu'a
+                Chercher
               </Label>
               <TextInput
                 id="text"
-                name="transaction"
-                placeholder="Transaction se rendre jusqu'a"
-              />
-            </div>
-            <div className="p-5 mt-5 flex-grow">
-              <Label htmlFor="text">
-                Tous les départements :
-              </Label>
-              <Select
-                id="text"
-                name="departements"
-                placeholder="Tous les départements"
-              />
-            </div>
-            <div className="p-5 mt-5 flex-grow">
-              <Label htmlFor="text">
-                Chargé de projet :
-              </Label>
-              <Select
-                id="text"
-                name="departements"
-                placeholder="Chargé de projet :"
+                name="chercher"
+                placeholder="Chercher"
               />
             </div>
             <div className="flex justify-between items-center border-b border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
@@ -111,14 +98,18 @@ const EmployersPage: FC = function () {
                 {isLoading ? (
                   <p></p>
                 ) : (
-                  <AllEmployersTable employers={employers} />
-                )}
+                  <AllEmployersTable employers={displayedEmployers} />
+                  )}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Pagination />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(employers.length / itemsPerPage)}
+        onPageChange={(newPage) => setCurrentPage(newPage)}
+      />
     </NavbarSidebarLayout>
 
   );

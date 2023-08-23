@@ -30,7 +30,7 @@ const App = () => {
     isAuthenticated: false,
     email: "",
     password: "",
-    role: "", // Initially set to an empty string
+    role: "", 
   });
 
   return (
