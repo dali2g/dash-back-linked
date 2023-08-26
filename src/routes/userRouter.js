@@ -20,6 +20,22 @@ userRouter.post('/responsables', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while saving the form data.' });
   }
 });
+userRouter.get('/profils', async (req, res) => {
+  try {
+    const db = getDB();
+    const collection = db.collection('Responsables');
+
+    // Fetch the data from the 'Responsables' collection
+    const responseData = await collection.find({}).toArray();
+
+    // Send the data as JSON
+    res.status(200).json(responseData);
+  } catch (error) {
+    console.error('Error fetching profils data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching profils data.' });
+  }
+});
+
 
 userRouter.get('/responsables', async (req, res) => {
   try {
@@ -111,8 +127,4 @@ userRouter.post('/login', async (req, res) => {
     res.status(500).json({ error: 'An error occurred during login' });
   }
 });
-
-
-
-
 export default userRouter;

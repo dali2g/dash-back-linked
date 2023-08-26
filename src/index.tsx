@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -11,6 +11,7 @@ import SignInPage from "./views/pages/auth/login";
 import EmployersPage from "./views/pages/employers";
 import ResponsablesPage from "./views/pages/responsables";
 import AgentCard from "./views/pages/profile";
+import axios from "axios";
 
 const container = document.getElementById("root");
 
@@ -21,6 +22,7 @@ if (!container) {
 const root = createRoot(container);
 
 const App = () => {
+  const [userData, setUserData] = useState([]); // State to store user data
   const [user, setUser] = useState<{
     isAuthenticated: boolean;
     email: string;
@@ -30,8 +32,22 @@ const App = () => {
     isAuthenticated: false,
     email: "",
     password: "",
-    role: "", 
+    role: "",
   });
+
+  useEffect(() => {
+    // Fetch user data and set it in the state
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5173/users/profils");
+        setUserData(response.data); // Set the fetched user data
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData(); // Call the fetchUserData function when the component mounts
+  }, []); // Empty dependency array to run this effect only once
 
   return (
     <StrictMode>
@@ -44,7 +60,7 @@ const App = () => {
             />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/employers" element={<EmployersPage />} />
-            <Route path="/profils" element={<AgentCard />} />
+            <Route path="/profils" element={<AgentCard user={userData} />} />
             <Route path="/responsables" element={<ResponsablesPage /> } />
           </Routes>
         </BrowserRouter>
