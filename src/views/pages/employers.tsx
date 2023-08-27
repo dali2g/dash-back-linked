@@ -49,7 +49,7 @@ const EmployersPage: FC = function () {
             <Breadcrumb.Item href="#">
               <div className="flex items-center gap-x-3">
                 <HiHome className="text-xl" />
-                <span className="dark:text-white">Home</span>
+                <span className="dark:text-white">Acceuil</span>
               </div>
             </Breadcrumb.Item>
             <Breadcrumb.Item href="/e-commerce/employees">
