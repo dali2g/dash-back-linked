@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
 // Connection URL and database name
-const url = 'DATABASE_URL';
+const url = 'mongodb+srv://autoroute:autoroute@cluster0.ahkbe46.mongodb.net/';
 const dbName = 'Autoroute';
 
 // Create a new MongoClient

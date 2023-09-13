@@ -58,4 +58,43 @@ employerRouter.delete('/employee/:id',async(req,res) =>{
      }
 })
 
+employerRouter.put('/employee/:id', async (req, res) => {
+    try {
+      const db = getDB();
+      const collection = db.collection('Employers');
+      const employerId = req.params.id;
+      
+      const updatedEmployer = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phone:req.body.phone,
+        gender:req.body.gender,
+        matricule:req.body.matricule,
+        site:req.body.site,
+        echelon:req.body.echelon,
+        souscategories:req.body.souscategories,
+        typecontrat:req.body.typecontrat,
+        etatscivils:req.body.etatscivils,
+        grade:req.body.grade
+      };
+      
+      const result = await collection.updateOne(
+        { _id: new ObjectId(employerId) },
+        { $set: updatedEmployer }
+      );
+      
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ message: 'Employer updated successfully' });
+      } else {
+        res.status(404).json({ error: 'An error occurred while updating the Employer' });
+      }
+    } catch (error) {
+      console.log('Error updating Employer:', error);
+      res.status(500).json({ error: 'An error occurred while updating the Employer' });
+    }
+  });
+
+
+
 export default employerRouter;

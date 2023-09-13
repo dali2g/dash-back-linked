@@ -2,7 +2,7 @@ import { Table } from "flowbite-react";
 import type { FC } from "react";
 import React from "react";
 import DeleteEmployerModal from "./modals/deleteEmployerModal";
-
+import EditEmployerModal from "./modals/editEmployerModal";
 
 interface Employer {
   id: number;
@@ -86,7 +86,7 @@ const AllEmployersTable: FC<{employers:any[]}> = function ({employers}) {
               
               <Table.Cell>
                 <div className="flex items-center gap-x-3 whitespace-nowrap">
-               {/*    <EditEmployerModal employer={employer._id} />*/}
+                  <EditEmployerModal employer={employer._id} />
                   <DeleteEmployerModal employer={employer._id} /> 
                 </div>
               </Table.Cell>

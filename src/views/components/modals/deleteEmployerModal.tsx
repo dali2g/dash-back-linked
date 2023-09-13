@@ -24,7 +24,7 @@ const DeleteEmployerModal: FC<DeleteEmployerModalProps> = function ({
         console.error("Error deleting user:", error);
       });
 
-    setOpen(false); // Close the modal after deletion
+    setOpen(false); 
   };
 
   return (
