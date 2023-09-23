@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Badge, Dropdown, Table, useTheme } from "flowbite-react";
+import { Table } from "flowbite-react";
 import type { FC } from "react";
-import Chart from "react-apexcharts";
+import ReactApexChart from "react-apexcharts";
 import NavbarSidebarLayout from "../layout/navbar-sidebar";
 import React ,{ useState,useEffect } from "react"
 import Papa from 'papaparse'
@@ -70,26 +70,11 @@ const SalesThisWeek: FC = function () {
       <div className="mb-4 flex items-center justify-between">
         <div className="shrink-0">
           <span className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">
-            {employeeData.length > 0 ? employeeData[50].Matricule : 'Loading...'}
+          Répartition Homme/Femme :
           </span>
-          <h3 className="text-base font-normal text-gray-600 dark:text-gray-400">
-            Matricule du 1er employé
+          <h3 className="text-base font-normal text-gray-600 dark:text-gray-400 mt-6 ">
+            Homme: 1580 <br/> Femme: 365
           </h3>
-        </div>
-        <div className="flex flex-1 items-center justify-end text-base font-bold text-green-600 dark:text-green-400">
-          12.5%
-          <svg
-            className="h-5 w-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
         </div>
       </div>
       <SalesChart />
@@ -117,109 +102,108 @@ const SalesThisWeek: FC = function () {
           </a>
         </div>
       </div>
+      
     </div>
   );
-};
-
-
-const SalesChart: FC = function () {
+};const SalesChart: FC = function () {
   const [csvData, setCsvData] = useState<EmployeeData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-       
-        const response = await fetch('/data/data.csv');
+        const response = await fetch("/data/data.csv");
 
         if (!response || !response.body) {
-          console.error('CSV data not available.');
+          console.error("CSV data not available.");
           return;
         }
 
         const reader = response.body.getReader();
         const result = await reader.read();
-        const text = new TextDecoder('utf-8').decode(result.value);
+        const text = new TextDecoder("utf-8").decode(result.value);
 
         const { data, errors } = Papa.parse(text, { header: true });
 
         if (errors.length === 0) {
-          // Limit the data to 10% of the total records
-          const slicedData = data.slice(0, Math.ceil(data.length * 0.5  ));
-          setCsvData(slicedData);
+          setCsvData(data);
         } else {
-          console.error('CSV parsing error:', errors);
+          console.error("CSV parsing error:", errors);
         }
       } catch (error) {
-        console.error('Error fetching CSV:', error);
+        console.error("Error fetching CSV:", error);
       }
     };
 
     fetchData();
   }, []);
 
-    const contratCounts: Record<string, number> = {};
-    csvData.forEach((row) => {
-      const contrat = row['Type Contrat'];
-      contratCounts[contrat] = (contratCounts[contrat] || 0) + 1;
-    });
-  
-    const contratTypes = Object.keys(contratCounts);
-    const contratCountsArray = contratTypes.map((contrat) => contratCounts[contrat]);
-  
-    const options: ApexCharts.ApexOptions = {
-      chart: {
-        type: "bar",
-        fontFamily: "Inter, sans-serif",
-        toolbar: {
-          show: false,
+  const sexeCounts: Record<string, number> = {};
+  csvData.forEach((row) => {
+    const sexe = row["Sexe"];
+    sexeCounts[sexe] = (sexeCounts[sexe] || 0) + 1;
+  });
+
+  const sexeTypes = ["Masculin", "FEMININ"];
+  const sexeCountsArray = sexeTypes.map((sexe) => sexeCounts[sexe] || 0);
+
+  const options: ApexCharts.ApexOptions = {
+    chart: {
+      type: "bar",
+      height: 420,
+      fontFamily: "Inter, sans-serif",
+      toolbar: {
+        show: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "45%",
+        distributed: true,
+        horizontal: false,
+      },
+    },
+    xaxis: {
+      categories: sexeTypes,
+      labels: {
+        style: {
+          fontSize: "14px",
+          fontWeight: 500,
         },
       },
-      xaxis: {
-        categories: contratTypes,
-        labels: {
-          style: {
-            fontSize: "14px",
-            fontWeight: 500,
-          },
+    },
+    yaxis: {
+      title: {
+        text: "Répartition Femmes/Hommes",
+        style: {
+          fontSize: "14px",
+          fontWeight: 500,
         },
       },
-      yaxis: {
-        title: {
-          text: "Nombre Des Employées",
-          style: {
-            fontSize: "14px",
-            fontWeight: 500,
-          },
-        },
-        labels: {
-          style: {
-            fontSize: "14px",
-            fontWeight: 500,
-          },
+      labels: {
+        style: {
+          fontSize: "14px",
+          fontWeight: 500,
         },
       },
-      legend: {
-        fontSize: "14px",
-        fontWeight: 500,
-        labels: {
-          colors: ["#6B7280"],
-        },
-      },
-    };
-  
-    const series = [{
-      name: "Employés",
-      data: contratCountsArray,
-      color: "#1A56DB", 
-    }];
-  
-    return <Chart height={420} options={options} series={series} />;
+    },
+    legend: {
+      show: false,
+    },
   };
 
+  const series = [
+    {
+      data: sexeCountsArray,
+      colors: ["#1A56DB", "#F78CA2"],
+    },
+  ];
 
-
-
-
+  return (
+    <div id="chart">
+      <ReactApexChart options={options} series={series} type="bar" height={420} />
+    </div>
+  );
+};
 const AcquisitionOverview: FC = function () {
   const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
   const [gradeAcquisitions, setGradeAcquisitions] = useState<{ [grade: string]: number }>({});
@@ -275,7 +259,7 @@ const AcquisitionOverview: FC = function () {
   return (
     <div className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-6 xl:p-8">
       <h3 className="mb-6 text-xl font-bold leading-none text-gray-900 dark:text-white">
-      Aperçu du domaine de travail
+      Aperçu du nombre des salariés par département
       </h3>
       <div className="flex flex-col">
         <div className="overflow-x-auto rounded-lg">
@@ -416,85 +400,14 @@ const LatestTransactions: FC = function () {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">
-            Listes des employés
+          Le nombre de salariés
           </h3>
           <span className="text-base font-normal text-gray-600 dark:text-gray-400">
-            Ceci est une liste des employés
+            Ceci est le nombre des employés
           </span>
+          <h3 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">1945</h3>
         </div>
-        <div className="shrink-0">
-          <a
-            href="/employers"
-            className="rounded-lg p-2 text-sm font-medium text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover:bg-gray-700"
-          >
-            Voir
-          </a>
-        </div>
-      </div>
-      <div className="mt-8 flex flex-col">
-        <div className="overflow-x-auto rounded-lg">
-          <div className="inline-block min-w-full align-middle">
-            <div className="overflow-hidden shadow sm:rounded-lg">
-              <Table
-                striped
-                className="min-w-full divide-y divide-gray-200 dark:divide-gray-600"
-              >
-                <Table.Head className="bg-gray-50 dark:bg-gray-700">
-                  <Table.HeadCell>Matricule</Table.HeadCell>
-                  <Table.HeadCell>Sexe</Table.HeadCell>
-                  <Table.HeadCell>Grade</Table.HeadCell>
-                  <Table.HeadCell>Echelon</Table.HeadCell>
-                  <Table.HeadCell>Fonction</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="bg-white dark:bg-gray-800">
-                  {employeeData.map((employee) => (
-                    <Table.Row key={employee.Matricule}>
-                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-900 dark:text-white">
-                        {employee.Matricule}
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        {employee.Sexe}
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        {employee.Grade}
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        {employee.Echelon}
-                      </Table.Cell>
-                      <Table.Cell className="whitespace-nowrap p-4 text-sm font-normal text-gray-500 dark:text-gray-400">
-                        {employee.Fonction}
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center justify-between pt-3 sm:pt-6">
-        <div className="shrink-0">
-          <a
-            href="#" // I should add link for export excel here
-            className="inline-flex items-center rounded-lg p-2 text-xs font-medium uppercase text-primary-700 hover:bg-gray-100 dark:text-primary-500 dark:hover-bg-gray-700 sm:text-sm"
-          >
-            Export
-            <svg
-              className="ml-1 h-3 w-4 sm:h-5 sm:w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </a>
-        </div>
+     
       </div>
     </div>
   );
