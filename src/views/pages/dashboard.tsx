@@ -147,7 +147,7 @@ const SalesThisWeek: FC = function () {
   const sexeCountsArray = sexeTypes.map((sexe) => sexeCounts[sexe] || 0);
 
   const options: ApexCharts.ApexOptions = {
-    chart: {
+    chart: {  
       type: "bar",
       height: 420,
       fontFamily: "Inter, sans-serif",
@@ -211,7 +211,6 @@ const AcquisitionOverview: FC = function () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Update the URL to fetch CSV data from your Express.js server
         const response = await fetch('/data/data.csv');
 
         if (!response || !response.body) {
@@ -239,7 +238,6 @@ const AcquisitionOverview: FC = function () {
   }, []);
 
   useEffect(() => {
-    // Calculate the grade acquisitions
     const gradeCounts: { [grade: string]: number } = {};
 
     employeeData.forEach((row) => {
@@ -344,7 +342,6 @@ const LatestTransactions: FC = function () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch CSV data containing Sexe, Grade, Echelon, and Fonction
         const response = await fetch('/data/data.csv'); 
 
         if (!response || !response.body) {
@@ -359,7 +356,6 @@ const LatestTransactions: FC = function () {
         const { data, errors } = Papa.parse(text, { header: true });
 
         if (errors.length === 0) {
-          // Randomly select 20 employees from the fetched data
           const randomEmployees = getRandomEmployees(data, 20);
           setEmployeeData(randomEmployees);
         } else {
