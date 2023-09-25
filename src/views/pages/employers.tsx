@@ -3,7 +3,6 @@ import {
   Breadcrumb,
   Button,
   Label,
-  Select,
   TextInput
 } from "flowbite-react";
 import { FC } from "react";

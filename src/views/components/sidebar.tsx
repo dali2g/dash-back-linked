@@ -2,8 +2,6 @@ import { Sidebar } from "flowbite-react";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import {
-  HiChartBar,
-  HiChat,
   HiCollection,
   HiLogout,
   HiShoppingBag,
@@ -54,13 +52,6 @@ const ExampleSidebar: FC = function () {
             >
              Profils
             </Sidebar.Item>
-          {/*   <Sidebar.Item
-              href="/rapports"
-              icon={HiChartBar}
-
-            >
-             Rapports
-            </Sidebar.Item> */}
             <Sidebar.Item
               href="/"
               icon={HiLogout}>

@@ -25,10 +25,8 @@ userRouter.get('/profils', async (req, res) => {
     const db = getDB();
     const collection = db.collection('Responsables');
 
-    // Fetch the data from the 'Responsables' collection
     const responseData = await collection.find({}).toArray();
 
-    // Send the data as JSON
     res.status(200).json(responseData);
   } catch (error) {
     console.error('Error fetching profils data:', error);
@@ -109,17 +107,14 @@ userRouter.post('/login', async (req, res) => {
     const user = await collection.findOne({ email });
 
     if (user && user.password === password) {
-      // Successfully authenticated
       res.status(200).json({
         message: 'Login successful',
         user: {
           email: user.email,
           password: user.password,
-          // Include other user details here
         },
       });
     } else {
-      // Authentication failed
       res.status(401).json({ error: 'Invalid credentials' });
     }
   } catch (error) {

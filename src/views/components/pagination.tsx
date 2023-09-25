@@ -12,14 +12,12 @@ const Pagination: FC<PaginationProps> = function ({
   totalPages,
   onPageChange,
 }) {
-  // Function to handle next page click
   const handleNextClick = () => {
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
   };
 
-  // Function to handle previous page click
   const handlePrevClick = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);

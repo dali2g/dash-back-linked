@@ -18,7 +18,6 @@ interface EmployeeData {
   Grade: string;
 }
 
-
 const DashboardPage: FC = function () {
   return (
     <NavbarSidebarLayout>
@@ -201,7 +200,7 @@ const SalesChart: FC = function () {
       },
     },
     xaxis: {
-      categories: Array.from({ length: 100 }, (_, i) => i + 1), // Age categories from 1 to 100
+      categories: Array.from({ length: 100 }, (_, i) => i + 1), 
       labels: {
         style: {
           fontSize: "14px",
@@ -210,13 +209,13 @@ const SalesChart: FC = function () {
       },
     },
     yaxis: {
-      show: false, // Hide the Y-axis
+      show: false, 
     },
     legend: {
-      show: false, // Show the legend to distinguish between sexes
+      show: false, 
     },
     dataLabels: {
-      enabled: false, // Remove numbers inside the chart
+      enabled: false,
     },
   };
 
@@ -456,11 +455,6 @@ const LatestTransactions: FC = function () {
     fetchData();
   }, []);
 
-  // Function to generate random badge colors
-  const getRandomBadgeColor = (): string => {
-    const colors = ["success", "failure", "warning", "info", "primary"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
 
   const getRandomEmployees = (data: EmployeeData[], count: number): EmployeeData[] => {
     if (count >= data.length) {
