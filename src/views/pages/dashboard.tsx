@@ -13,6 +13,7 @@ interface EmployeeData {
   Sexe: string;
   Catégorie: string;
   'Type Contrat': string; 
+  'Date Naissance':string;
   Fonction: string;
   Grade: string;
 }
@@ -105,7 +106,8 @@ const SalesThisWeek: FC = function () {
       
     </div>
   );
-};const SalesChart: FC = function () {
+};
+const SalesChart: FC = function () {
   const [csvData, setCsvData] = useState<EmployeeData[]>([]);
 
   useEffect(() => {
@@ -146,10 +148,82 @@ const SalesThisWeek: FC = function () {
   const sexeTypes = ["Masculin", "FEMININ"];
   const sexeCountsArray = sexeTypes.map((sexe) => sexeCounts[sexe] || 0);
 
-  const options: ApexCharts.ApexOptions = {
-    chart: {  
+  const calculateAge = (birthDate: string) => {
+    const birthYear = parseInt(birthDate.split("/")[2], 10);
+    return 2023 - birthYear;
+  };
+
+  const ageCounts: Record<string, Record<number, number>> = {};
+  csvData.forEach((row) => {
+    const age = calculateAge(row["Date Naissance"]);
+    const sexe = row["Sexe"];
+
+    if (!ageCounts[sexe]) {
+      ageCounts[sexe] = {};
+    }
+
+    if (!ageCounts[sexe][age]) {
+      ageCounts[sexe][age] = 1;
+    } else {
+      ageCounts[sexe][age]++;
+    }
+  });
+
+  const seriesData: { name: string; data: number[] }[] = [];
+  for (const sexe of Object.keys(ageCounts)) {
+    const ageCountsArray: number[] = [];
+    for (let age = 1; age <= 100; age++) {
+      ageCountsArray.push((ageCounts[sexe] && ageCounts[sexe][age]) || 0);
+    }
+    seriesData.push({
+      name: sexe,
+      data: ageCountsArray,
+    });
+  }
+
+  const ageChartOptions: ApexCharts.ApexOptions = {
+    chart: {
       type: "bar",
-      height: 420,
+      height: '600px',
+      fontFamily: "Inter, sans-serif",
+      toolbar: {
+        show: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "100%",
+        distributed: true,
+        horizontal: true,
+        barHeight:"100%",
+      
+
+      },
+    },
+    xaxis: {
+      categories: Array.from({ length: 100 }, (_, i) => i + 1), // Age categories from 1 to 100
+      labels: {
+        style: {
+          fontSize: "14px",
+          fontWeight: 200,
+        },
+      },
+    },
+    yaxis: {
+      show: false, // Hide the Y-axis
+    },
+    legend: {
+      show: false, // Show the legend to distinguish between sexes
+    },
+    dataLabels: {
+      enabled: false, // Remove numbers inside the chart
+    },
+  };
+
+  const genderChartOptions: ApexCharts.ApexOptions = {
+    chart: {
+      type: "bar",
+      height: '600px',
       fontFamily: "Inter, sans-serif",
       toolbar: {
         show: false,
@@ -160,6 +234,8 @@ const SalesThisWeek: FC = function () {
         columnWidth: "45%",
         distributed: true,
         horizontal: false,
+        barHeight:"100%",
+
       },
     },
     xaxis: {
@@ -167,7 +243,7 @@ const SalesThisWeek: FC = function () {
       labels: {
         style: {
           fontSize: "14px",
-          fontWeight: 500,
+          fontWeight: 200,
         },
       },
     },
@@ -176,18 +252,22 @@ const SalesThisWeek: FC = function () {
         text: "Répartition Femmes/Hommes",
         style: {
           fontSize: "14px",
-          fontWeight: 500,
+          fontWeight: 200,
+       
         },
       },
       labels: {
         style: {
           fontSize: "14px",
-          fontWeight: 500,
+          fontWeight: 200,
         },
       },
     },
     legend: {
       show: false,
+    },
+    dataLabels: {
+      enabled: false, 
     },
   };
 
@@ -200,10 +280,17 @@ const SalesThisWeek: FC = function () {
 
   return (
     <div id="chart">
-      <ReactApexChart options={options} series={series} type="bar" height={420} />
+      <h2>Répartition par Sexe</h2>
+      <ReactApexChart options={genderChartOptions} series={series} type="bar" height={420} />
+
+      <h1 className="text-2xl font-bold leading-none text-gray-900 dark:text-white sm:text-3xl">Pyramide des Âges Par Sexe</h1>
+      <ReactApexChart options={ageChartOptions} series={seriesData} type="bar" height={420} />
     </div>
   );
 };
+
+
+
 const AcquisitionOverview: FC = function () {
   const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
   const [gradeAcquisitions, setGradeAcquisitions] = useState<{ [grade: string]: number }>({});
